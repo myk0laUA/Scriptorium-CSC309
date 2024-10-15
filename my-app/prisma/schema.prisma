@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int        @id @default(autoincrement())
+  firstName         String
+  lastName          String
+  email             String     @unique
+  avatar            String?    // Optional avatar URL
+  phoneNum          String     @unique // Unique phone number
+  templates         Template[] // One-to-many relation with Template
+  blogPosts         BlogPost[] // One-to-many relation with BlogPost
+  editability       Boolean    @default(true) // Default to true
+  upvotedPosts      BlogPost[] @relation("UserUpvotes") // Many-to-many relation with BlogPost
+  downvotedPosts    BlogPost[] @relation("UserDownvotes") // Many-to-many relation with BlogPost
+  upvotedComments    Comment[]  @relation("UserCommentUpvotes") // Many-to-many relation with Comment
+  downvotedComments  Comment[]  @relation("UserCommentDownvotes") // Many-to-many relation with Comment
+}
+
+model BlogPost {
+  id            Int       @id @default(autoincrement())
+  title         String    @unique
+  description   String
+  tags          String[]  
+  userId        Int       
+  author        User      @relation(fields: [userId], references: [id]) // Many-to-one relation
+  linkToTemplates String[]?  
+  upvotes       Int       @default(0)
+  downvotes     Int       @default(0) 
+  rating        Int       @default(0)
+  report        String?   
+  blogPosts     BlogPost[]?
+  comments      Comments[]?
+  numReports    Int       @default(0) // Default to 0
+  hidden        Boolean   @default(false)
+   
+}
+
+Create Blog Post (POST)
+Get All
+Get All Filtered
+Get Single
+Update Single (PUT)
+Delete Single
+Upvote + Downvote
+Report Specific
+Get Comments (for Specific)
+Add Comments (to Specific)
+
