@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -29,6 +29,18 @@ model User {
   downvotedComments  Comment[]  @relation("UserCommentDownvotes") // Many-to-many relation with Comment
 }
 
+model Template {
+  id         Int      @id @default(autoincrement())
+  title      String   @unique
+  explanation String?
+  tags       String[]
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  hidden     Boolean  @default(false)
+  forkedFrom Int?     // If it's a fork, reference the original template
+  code       String
+}
+
 model BlogPost {
   id            Int       @id @default(autoincrement())
   title         String    @unique
@@ -46,6 +58,29 @@ model BlogPost {
   numReports    Int       @default(0) // Default to 0
   hidden        Boolean   @default(false)
    
+}
+model Comment {
+  id           Int      @id @default(autoincrement())
+  body         String
+  upvotes      Int      @default(0)
+  downvotes    Int      @default(0)
+  reports      Report[]
+  numReports   Int
+  hidden       Boolean  @default(false)
+  author       User     @relation(fields: [authorId], references: [id])
+  authorId     Int
+}
+
+model Report {
+  id           Int      @id @default(autoincrement())
+  explanation  String?
+  contentId    Int
+  contentType  ContentType
+}
+
+enum ContentType {
+  BLOGPOST
+  COMMENT
 }
 
 Create Blog Post (POST)
