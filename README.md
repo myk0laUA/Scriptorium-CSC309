@@ -1,14 +1,36 @@
-# CSC309-PP1
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Getting Started
 
-Models:
+First, run the development server:
 
-1. User Model attributes: firstName, lastName, email (unique), avatar, phoneNum (unique), templates[], blogPosts[], editability (default=true), upvotedPosts[], downvotedPosts[], upvotedComments[], downvotedComments[]
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-2. Template Model attributes: title (unique), explanation (optional?), tags, many-to-one relationship with users, hidden (default=false), forkedFrom (optional), code
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-3. Blog Post Model attributes: title (unique), description, tags, many-to-one with users, link to templates (optional), blogPosts[], upvotes, downvotes (default = 0), report (optional), numReports, hidden (default=false), author 
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-4. Comment Model attributes: body, upvotes, downvotes (default = 0), report (optional), numReports, hidden (default=false), author 
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-5. Report Model attributes: blogPost/model, explanation(optional?), contentId, ContentType( blogpost/ comment)
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

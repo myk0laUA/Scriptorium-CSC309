@@ -18,6 +18,7 @@ model User {
   firstName         String
   lastName          String
   email             String     @unique
+  passwordHash      String
   avatar            String?    // Optional avatar URL
   phoneNum          String     @unique // Unique phone number
   templates         Template[] // One-to-many relation with Template
@@ -36,26 +37,69 @@ model BlogPost {
   tags          String[]  
   userId        Int       
   author        User      @relation(fields: [userId], references: [id]) // Many-to-one relation
-  linkToTemplates String[]?  
+  linkToTemplates String[] 
   upvotes       Int       @default(0)
   downvotes     Int       @default(0) 
   rating        Int       @default(0)
   report        String?   
-  blogPosts     BlogPost[]?
-  comments      Comments[]?
+  blogPosts     BlogPost[]
+  comments      Comment[]
   numReports    Int       @default(0) // Default to 0
   hidden        Boolean   @default(false)
    
 }
 
-Create Blog Post (POST)
-Get All
-Get All Filtered
-Get Single
-Update Single (PUT)
-Delete Single
-Upvote + Downvote
-Report Specific
-Get Comments (for Specific)
-Add Comments (to Specific)
+model Comment {
+  id             Int       @id @default(autoincrement())
+  postId         Int
+  userId         Int
+  body           String
+  upvotes        Int       @default(0)
+  downvotes      Int       @default(0)
+  numReports     Int       @default(0)
+  rating         Int       @default(0)
+  hidden         Boolean   @default(false)
+  parentCommentId Int?
+  createdAt      DateTime  @default(now())
+
+  BlogPost       BlogPost  @relation(fields: [postId], references: [id])
+  User           User      @relation(fields: [userId], references: [id])
+  ParentComment  Comment?  @relation("ReplyThread", fields: [parentCommentId], references: [id])
+  Replies        Comment[] @relation("ReplyThread")
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model Report {
+  id            Int       @id @default(autoincrement())
+  reportedContentId Int   // ID of the reported content
+  contentType   ContentType
+  explanation   String?   // Optional explanation
+
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  BlogPost      BlogPost? @relation(fields: [reportedContentId], references: [id])
+  Comment       Comment?  @relation(fields: [reportedContentId], references: [id])
+
+  // Indexes
+  @@index([reportedContentId])
+}
+
+enum ContentType {
+  BLOGPOST
+  COMMENT
+}
+
+// Create Blog Post (POST)
+// Get All
+// Get All Filtered
+// Get Single
+// Update Single (PUT)
+// Delete Single
+// Upvote + Downvote
+// Report Specific
+// Get Comments (for Specific)
+// Add Comments (to Specific)
 
