@@ -22,7 +22,6 @@ model User {
   phoneNum          String     @unique // Unique phone number
   templates         Template[] // One-to-many relation with Template
   blogPosts         BlogPost[] // One-to-many relation with BlogPost
-  editability       Boolean    @default(true) // Default to true
   upvotedPosts      BlogPost[] @relation("UserUpvotes") // Many-to-many relation with BlogPost
   downvotedPosts    BlogPost[] @relation("UserDownvotes") // Many-to-many relation with BlogPost
   upvotedComments    Comment[]  @relation("UserCommentUpvotes") // Many-to-many relation with Comment
@@ -36,17 +35,19 @@ model BlogPost {
   tags          String[]  
   userId        Int       
   author        User      @relation(fields: [userId], references: [id]) // Many-to-one relation
-  linkToTemplates String[]?  
+  linkToTemplates String[]  
   upvotes       Int       @default(0)
   downvotes     Int       @default(0) 
   rating        Int       @default(0)
   report        String?   
-  blogPosts     BlogPost[]?
-  comments      Comments[]?
+  blogPosts     BlogPost[]
+  comments      Comments[]
   numReports    Int       @default(0) // Default to 0
   hidden        Boolean   @default(false)
+  editability       Boolean    @default(true) // Default to true
    
 }
+
 model Template {
   id         Int      @id @default(autoincrement())
   title      String   @unique
@@ -59,15 +60,54 @@ model Template {
   code       String
 }
 
+model Comment {
+  id             Int       @id @default(autoincrement())
+  postId         Int
+  userId         Int
+  body           String
+  upvotes        Int       @default(0)
+  downvotes      Int       @default(0)
+  numReports     Int       @default(0)
+  rating         Int       @default(0)
+  hidden         Boolean   @default(false)
+  parentCommentId Int?
+  createdAt      DateTime  @default(now())
 
-Create Blog Post (POST)
-Get All
-Get All Filtered
-Get Single
-Update Single (PUT)
-Delete Single
-Upvote + Downvote
-Report Specific
-Get Comments (for Specific)
-Add Comments (to Specific)
+  BlogPost       BlogPost  @relation(fields: [postId], references: [id])
+  User           User      @relation(fields: [userId], references: [id])
+  ParentComment  Comment?  @relation("ReplyThread", fields: [parentCommentId], references: [id])
+  Replies        Comment[] @relation("ReplyThread")
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model Report {
+  id            Int       @id @default(autoincrement())
+  reportedContentId Int   // ID of the reported content
+  contentType   ContentType
+  explanation   String?   // Optional explanation
+  createdAt     DateTime  @default(now())
+
+  BlogPost      BlogPost? @relation(fields: [reportedContentId], references: [id])
+  Comment       Comment?  @relation(fields: [reportedContentId], references: [id])
+
+  @@index([reportedContentId])
+}
+
+enum ContentType {
+  BLOGPOST
+  COMMENT
+}
+
+// Create Blog Post (POST)
+// Get All
+// Get All Filtered
+// Get Single
+// Update Single (PUT)
+// Delete Single
+// Upvote + Downvote
+// Report Specific
+// Get Comments (for Specific)
+// Add Comments (to Specific)
 
