@@ -1,3 +1,5 @@
+import prisma from "@/utils/db";
+
 export default async function handler(req, res) {
     if (req.method === "POST") {
         const { title, description, tags, linkToTemplates, userId } = req.body;
@@ -17,7 +19,7 @@ export default async function handler(req, res) {
             },
         });
 
-        return res.statust(201).json(blogPost);
+        return res.status(201).json(blogPost);
     
     } else if (req.method == "GET") {
 

@@ -21,7 +21,8 @@ model User {
   downvotedPosts    BlogPost[] @relation("UserDownvotes")
   upvotedComments   Comment[]  @relation("UserCommentUpvotes")
   downvotedComments Comment[]  @relation("UserCommentDownvotes")
-  comments          Comment[]  // Added this field
+  comments          Comment[] 
+  reports           Report[]
 }
 
 model BlogPost {
@@ -40,7 +41,7 @@ model BlogPost {
   numReports      Int       @default(0)
   hidden          Boolean   @default(false)
   editability     Boolean   @default(true)
-  reports         Report[]  // Added this field
+  reports         Report[] 
 }
 
 model Template {
@@ -82,16 +83,19 @@ model Comment {
   User           User      @relation(fields: [userId], references: [id])
   ParentComment  Comment?  @relation("ReplyThread", fields: [parentCommentId], references: [id])
   Replies        Comment[] @relation("ReplyThread")
-  reports        Report[]  // Added this field
+  reports        Report[] 
 }
 
 model Report {
   id                Int       @id @default(autoincrement())
-  reportedContentId Int
+  blogPostId        Int?
+  commentId         Int?
   contentType       String
   explanation       String?
   createdAt         DateTime  @default(now())
+  userId            Int
 
-  BlogPost          BlogPost? @relation(fields: [reportedContentId], references: [id])
-  Comment           Comment?  @relation(fields: [reportedContentId], references: [id])
+  BlogPost          BlogPost? @relation(fields: [blogPostId], references: [id])
+  Comment           Comment?  @relation(fields: [commentId], references: [id])
+  User              User      @relation(fields: [userId], references: [id])
 }
