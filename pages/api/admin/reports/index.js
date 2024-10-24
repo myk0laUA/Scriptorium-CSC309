@@ -3,7 +3,7 @@ import prisma from "@/utils/db";
 export default async function handler(req, res) {
     // Admin authentication placeholder
     if (req.method === "GET") {
-        const { contentType, sortByReports, page = 1, limit = 10 } = req.query;
+        const { contentType, sortByReports, page = 1, limit = 10 } = req.query; // pagination logic influenced by ChatGPT
 
         if (!contentType || !["post", "comment"].includes(contentType)) {
             return res.status(400).json({ message: "Content Type is required" });
