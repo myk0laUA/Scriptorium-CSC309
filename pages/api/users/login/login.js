@@ -1,4 +1,8 @@
+import bcrypt from 'bcrypt';
+
 import jwt from 'jsonwebtoken';
+
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -28,9 +32,10 @@ export default async function handler(req, res) {
         }
 
         const payload = {
+            id: existingUser.id,
             username: existingUser.username,
             role: existingUser.role,
-            expiresAt: Date.now() + ACCESS_TOKEN_EXPIRES_IN,
+            expiresAt: Date.now() + process.env.ACCESS_TOKEN_EXPIRES_IN,
         }
 
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN });

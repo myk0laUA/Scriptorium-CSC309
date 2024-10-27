@@ -11,7 +11,7 @@ export default async function authenticateJWT(req, res, next) {
     const token = authHeader.split(' ')[1];
 
     try {
-        const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const user = jwt.verify(token, process.env.ACCESS_TOKEN);
         req.user = user;
         next(); 
 
