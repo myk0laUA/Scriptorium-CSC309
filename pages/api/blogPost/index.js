@@ -47,7 +47,7 @@ export default async function handler(req, res) {
             const templateIds = linkToTemplates.split(',').map(id => parseInt(id.trim()));
     
             
-            blogPosts = await prismaClient.blogPost.findMany({
+            blogPosts = await prisma.blogPost.findMany({
                 where: queryConditions,
                 include: {
                     linkToTemplates: {
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
             });
         } else {
             
-            blogPosts = await prismaClient.blogPost.findMany({
+            blogPosts = await prisma.blogPost.findMany({
                 where: queryConditions,
                 include: {
                     linkToTemplates: {
