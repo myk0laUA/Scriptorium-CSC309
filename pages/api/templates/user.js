@@ -10,29 +10,61 @@ export default async function handler(req, res) {
     //}
     //const userId = session.user.id;
     const userId = 1; // Hardcoded user ID for testing
-    // Get search query
-    const { search } = req.query;
+
+     // Get search query and pagination parameters
+    const { search, page = 1, limit = 10 } = req.query;
+
+    // Convert search to lowercase for case-insensitive search
+    const lowerSearch = search ? search.toLowerCase() : "";
+
+    // Calculate pagination values
+    const take = parseInt(limit, 10); // Number of items per page
+    const skip = (parseInt(page, 10) - 1) * take; // Offset for pagination
 
     try {
-      // Build search conditions
-      const searchConditions = search
-        ? {
-            OR: [
-              { title: { contains: search, mode: 'insensitive' } },
-              { explanation: { contains: search, mode: 'insensitive' } },
-              { tags: { contains: search, mode: 'insensitive' } },
-            ],
-          }
-        : {};
+      // Fetch the total count of templates for the user with optional search
+      const totalItems = await prisma.template.count({
+        where: {
+          userId,
+          OR: lowerSearch
+            ? [
+                { title: { contains: lowerSearch } },
+                { explanation: { contains: lowerSearch } },
+                { tags: { contains: lowerSearch } },
+              ]
+            : undefined,
+        },
+      });
 
-      // Fetch user's templates with optional search
+      // Fetch paginated templates
       const templates = await prisma.template.findMany({
         where: {
           userId,
-          ...searchConditions,
+          OR: lowerSearch
+            ? [
+                { title: { contains: lowerSearch } },
+                { explanation: { contains: lowerSearch } },
+                { tags: { contains: lowerSearch } },
+              ]
+            : undefined,
+        },
+        take,
+        skip,
+      });
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalItems / take);
+
+      // Send response with templates and pagination info
+      res.status(200).json({
+        templates,
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: parseInt(page, 10),
+          perPage: take,
         },
       });
-      res.status(200).json(templates);
     } catch (error) {
       res.status(500).json({ message: 'Error fetching templates.', error: error.message });
     }

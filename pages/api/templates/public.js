@@ -2,35 +2,67 @@ import prisma from '../../../utils/db';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    // Get search query
-    const { search } = req.query;
+    // Get search query and pagination parameters
+    const { search, page = 1, limit = 10 } = req.query;
+
+    // Convert search term to lowercase for case-insensitive search
+    const lowerSearch = search ? search.toLowerCase() : "";
+
+    // Calculate pagination values
+    const take = parseInt(limit, 10); // Number of items per page
+    const skip = (parseInt(page, 10) - 1) * take; // Offset for pagination
 
     try {
-      // Build search conditions
-      const searchConditions = search
-        ? {
-            OR: [
-              { title: { contains: search, mode: 'insensitive' } },
-              { explanation: { contains: search, mode: 'insensitive' } },
-              { tags: { contains: search, mode: 'insensitive' } },
-              { code: { contains: search, mode: 'insensitive' } },
-            ],
-          }
-        : {};
+      // Fetch the total count of public templates with optional search
+      const totalItems = await prisma.template.count({
+        where: {
+          hidden: false,
+          OR: lowerSearch
+            ? [
+                { title: { contains: lowerSearch } },
+                { explanation: { contains: lowerSearch } },
+                { tags: { contains: lowerSearch } },
+                { code: { contains: lowerSearch } },
+              ]
+            : undefined,
+        },
+      });
 
-      // Fetch public templates with optional search
+      // Fetch paginated public templates
       const templates = await prisma.template.findMany({
         where: {
           hidden: false,
-          ...searchConditions,
+          OR: lowerSearch
+            ? [
+                { title: { contains: lowerSearch } },
+                { explanation: { contains: lowerSearch } },
+                { tags: { contains: lowerSearch } },
+                { code: { contains: lowerSearch } },
+              ]
+            : undefined,
         },
         include: {
           user: {
             select: { firstName: true, lastName: true, avatar: true },
           },
         },
+        take,
+        skip,
       });
-      res.status(200).json(templates);
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalItems / take);
+
+      // Send response with templates and pagination info
+      res.status(200).json({
+        templates,
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: parseInt(page, 10),
+          perPage: take,
+        },
+      });
     } catch (error) {
       res.status(500).json({ message: 'Error fetching templates.', error: error.message });
     }
