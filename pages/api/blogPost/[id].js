@@ -39,7 +39,7 @@ export default async function handler(req, res) {
 
         const { voteType } = req.body;
 
-        const existingBlogPost = await client.blogPost.findUnique({
+        const existingBlogPost = await prisma.blogPost.findUnique({
             where: { id: parseInt(id) },
         });
 
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         let updatedBlogPost;
 
         if (voteType === 'upvote') {
-            updatedBlogPost = await client.blogPost.update({
+            updatedBlogPost = await prisma.blogPost.update({
                 where: { id: parseInt(id) },
                 data: {
                     upvotes: updatedBlogPost.upvotes + 1,
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
             });
 
         } else if (voteType === 'downvote') {
-            updatedBlogPost = await client.blogPost.update({
+            updatedBlogPost = await prisma.blogPost.update({
                 where: { id: parseInt(id) },
                 data: {
                     downvotes: updatedBlogPost.downvotes + 1,
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
 
         const { title, description, tags, linkToTemplates } = req.body;
 
-        const existingBlogPost = await client.blogPost.findUnique({
+        const existingBlogPost = await prisma.blogPost.findUnique({
             where: { id: parseInt(id) },
         });
 
