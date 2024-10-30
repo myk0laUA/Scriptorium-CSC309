@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id                Int        @id @default(autoincrement())
+  username          String     @unique
   firstName         String
   lastName          String
   email             String     @unique
@@ -23,6 +24,7 @@ model User {
   downvotedComments Comment[]  @relation("UserCommentDownvotes")
   comments          Comment[] 
   reports           Report[]
+  role              String    @default("USER")
 }
 
 model BlogPost {
