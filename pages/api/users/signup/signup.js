@@ -8,9 +8,9 @@ export default async function handler(req, res) {
 
     if (req.method === "POST") {
         
-        const { username, firstName, lastName, email, passwordHash, avatar, phoneNum, role } = req.body;
+        const { username, firstName, lastName, email, password, avatar, phoneNum, role } = req.body;
 
-        if (!username || !firstName || !lastName || !email || !passwordHash || !phoneNum || !role) {
+        if (!username || !firstName || !lastName || !email || !password || !phoneNum) {
             return res.status(400).json({ error: 'All fields required'});
         }
 
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
         }
 
-        if (role !== "USER" && role !== "ADMIN") {
+        if (role && role !== "USER" && role !== "ADMIN") {
             return res.status(400).json({ error: 'Invalid role'});
         }
 
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Phone number already exists' });
         }
 
-        const hashedPassword = await bcrypt.hash(passwordHash, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await prisma.user.create({
             data: {
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
                 firstName,
                 lastName,
                 email,
-                passwordHash: hashedPassword,
+                password: hashedPassword,
                 avatar,
                 phoneNum,
                 role,
