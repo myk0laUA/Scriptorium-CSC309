@@ -13,7 +13,7 @@ model User {
   firstName         String
   lastName          String
   email             String     @unique
-  passwordHash      String     
+  password          String     
   avatar            String?
   phoneNum          String     @unique
   templates         Template[]
@@ -24,7 +24,7 @@ model User {
   downvotedComments Comment[]  @relation("UserCommentDownvotes")
   comments          Comment[] 
   reports           Report[]
-  role              String    @default("USER")
+  role              String?    @default("USER")
 }
 
 model BlogPost {
