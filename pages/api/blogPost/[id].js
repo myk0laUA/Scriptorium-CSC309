@@ -11,7 +11,6 @@ export default async function handler(req, res) {
 
             if (!id) {
                 return res.status(400).json({ error: 'Blog Post ID is required '});
-
             }
 
             const userId  = req.user.id;

@@ -4,12 +4,13 @@ import path from 'path';
 
 const languageConfig = {
   javascript: { extension: '.js', command: 'node' },
-  python: { extension: '.py', command: 'python' },
+  python: { extension: '.py', command: 'python3' },
   c: { extension: '.c', command: 'gcc', output: './tempCode.out' },
   cpp: { extension: '.cpp', command: 'g++', output: './tempCode.out' },
   java: { extension: '.java', command: 'javac', output: 'Main' }
 };
 
+// Implementation influenced by ChatGPT
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { code, input, language } = req.body;
@@ -43,11 +44,11 @@ export default async function handler(req, res) {
           // If compilation is successful, execute the compiled output
           const execCommand = language === 'java' ? 'java' : output;
           const execArgs = language === 'java' ? [output] : [];
-          executeFile(res, execCommand, input, execArgs);
+          executeFile(res, execCommand, input, execArgs, filePath, language);
         });
       } else {
         // For interpreted languages, run directly
-        executeFile(res, command, input, [filePath]);
+        executeFile(res, command, input, [filePath], filePath, language);
       }
     } catch (error) {
       fs.unlinkSync(filePath); // Clean up file on error
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
   }
 }
 
-function executeFile(res, command, input, args = []) {
+function executeFile(res, command, input, args = [], filePath, language) {
   const child = spawn(command, args);
   let output = '';
   let errorOutput = '';
@@ -77,6 +78,13 @@ function executeFile(res, command, input, args = []) {
   });
 
   child.on('close', (code) => {
+    // Clean up the temporary files
+    fs.unlinkSync(filePath);
+    if (language === 'c' || language === 'cpp') {
+      fs.unlinkSync('./tempCode.out');
+    } else if (language === 'java') {
+      fs.unlinkSync('./Main.class');
+    }
     if (errorOutput) {
       return res.status(200).json({ error: errorOutput.trim() });
     }
