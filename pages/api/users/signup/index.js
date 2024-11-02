@@ -67,8 +67,8 @@ export default async function handler(req, res) {
                 role,
             }
         })
-
-        return res.status(201).json(user);
+        // Don't return password hash
+        return res.status(201).json({ ...user, password: undefined });
 
 
     } else {
