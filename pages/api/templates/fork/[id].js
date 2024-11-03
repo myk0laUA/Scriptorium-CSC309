@@ -5,6 +5,8 @@ export default async function handler(req, res) {
   await authenticateJWT(req, res, async () => { 
     if (req.method === 'POST') {
       const templateId = parseInt(req.query.id);
+      // Get the authenticated user ID from req.user.id
+      const userId = req.user.id;
       const originalTemplate = await prisma.template.findUnique({
         where: { id: templateId },
       });
@@ -34,7 +36,7 @@ export default async function handler(req, res) {
             explanation,
             tags,
             code,
-            user: { connect: { id: user.id } },
+            user: { connect: { id: userId } },
             forkedFrom: originalTemplate.id,
           },
         });
