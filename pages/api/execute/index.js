@@ -25,12 +25,11 @@ export default async function handler(req, res) {
     fs.writeFileSync(filePath, code);
 
     try {
-      if (language === 'c' || language === 'cpp' || language === 'java') {
-        // Compile languages that require compilation (C, C++, Java)
-        const compileProcess = spawn(command, [filePath]);
+      if (language === 'c' || language === 'cpp') {
+        // Compile C/C++ with -o for output
+        const compileProcess = spawn(command, [filePath, '-o', output]);
 
         let compileErrorOutput = '';
-
         compileProcess.stderr.on('data', (data) => {
           compileErrorOutput += data.toString();
         });
@@ -40,12 +39,27 @@ export default async function handler(req, res) {
             fs.unlinkSync(filePath); // Clean up file after compilation error
             return res.status(500).json({ error: `Compilation failed: ${compileErrorOutput.trim()}` });
           }
-
-          // If compilation is successful, execute the compiled output
-          const execCommand = language === 'java' ? 'java' : output;
-          const execArgs = language === 'java' ? [output] : [];
-          executeFile(res, execCommand, input, execArgs, filePath, language);
+          executeFile(res, `./${output}`, input, [], filePath, language);
         });
+
+      } else if (language === 'java') {
+        // Compile Java without -o flag
+        const compileProcess = spawn(command, [filePath]);
+
+        let compileErrorOutput = '';
+        compileProcess.stderr.on('data', (data) => {
+          compileErrorOutput += data.toString();
+        });
+
+        compileProcess.on('close', (compileCode) => {
+          if (compileCode !== 0) {
+            fs.unlinkSync(filePath); // Clean up file after compilation error
+            return res.status(500).json({ error: `Compilation failed: ${compileErrorOutput.trim()}` });
+          }
+          // Execute compiled Java file (Main class)
+          executeFile(res, 'java', input, [output], filePath, language);
+        });
+
       } else {
         // For interpreted languages, run directly
         executeFile(res, command, input, [filePath], filePath, language);
@@ -85,8 +99,21 @@ function executeFile(res, command, input, args = [], filePath, language) {
     } else if (language === 'java') {
       fs.unlinkSync('./Main.class');
     }
+
     if (errorOutput) {
-      return res.status(200).json({ error: errorOutput.trim() });
+      // Trim error message for readability
+      const trimmedError = errorOutput
+        .split('\n')
+        .filter(line => 
+          !line.includes('at ') &&
+          !line.includes(filePath) &&
+          !line.includes('node:internal') &&
+          !line.includes('Node.js')
+        )
+        .join('\n')
+        .trim();
+
+      return res.status(200).json({ error: trimmedError });
     }
     res.status(200).json({ output: output.trim() });
   });
