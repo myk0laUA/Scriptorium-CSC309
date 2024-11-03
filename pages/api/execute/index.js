@@ -4,7 +4,7 @@ import path from 'path';
 
 const languageConfig = {
   javascript: { extension: '.js', command: 'node' },
-  python: { extension: '.py', command: 'python3' },
+  python: { extension: '.py', command: 'python' },
   c: { extension: '.c', command: 'gcc', output: './tempCode.out' },
   cpp: { extension: '.cpp', command: 'g++', output: './tempCode.out' },
   java: { extension: '.java', command: 'javac', output: 'Main' }
