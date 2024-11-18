@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 
+// refreshes access token
 export default async function handler(req, res) {
     if (req.method == 'POST') {
 

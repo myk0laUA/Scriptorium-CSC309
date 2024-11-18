@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Allows users to log in
 export default async function handler(req, res) {
     if (req.method == 'POST') {
 
@@ -26,6 +27,7 @@ export default async function handler(req, res) {
 
         }
 
+        // password verification
         const isPasswordValid = await bcrypt.compare(password, existingUser.password);
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid credentials' });
