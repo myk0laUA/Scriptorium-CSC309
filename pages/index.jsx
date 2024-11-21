@@ -21,7 +21,9 @@ const MainPage = () => {
         <h2 className="text-2xl font-semibold mb-6">Categories</h2>
         <ul className="list-none">
           <li className="mb-4 hover:bg-gray-600 p-2 rounded cursor-pointer">Templates</li>
-          <li className="mb-4 hover:bg-gray-600 p-2 rounded cursor-pointer">Blog Posts</li>
+          <li className="mb-4 hover:bg-gray-600 p-2 rounded cursor-pointer">
+            <Link href="/blog-posts">Blog Posts</Link>
+          </li>
         </ul>
       </div>
 
@@ -30,8 +32,12 @@ const MainPage = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-5xl font-bold text-gray-800">Scriptorium</h1>
           <div className="space-x-4">
-            <Link href="/signup">
+
+            <Link href="/login">
                 <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Log In</button>
+            </Link>
+
+            <Link href="/signup">
                 <button 
                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     onClick={handleSignUp}
