@@ -1,6 +1,16 @@
 import prisma from "@/utils/db";
 import authenticateJWT from "../protected/authorization";
 
+function buildRepliesInclude(depth) {
+    if (depth === 0) return {};
+    return {
+        Replies: {
+            include: buildRepliesInclude(depth - 1),
+            where: { hidden: false },
+        },
+    };
+}
+
 export default async function handler(req, res) {
     
     if (req.method === "POST") {
@@ -30,9 +40,6 @@ export default async function handler(req, res) {
                 if (parentComment.hidden) {
                     return res.status(403).json({ message: "Parent Comment is hidden" });
                 }
-                if (parentComment.parentCommentId) {
-                    return res.status(403).json({ message: "Parent Comment is a reply" });
-                }
             }
 
             try {
@@ -60,39 +67,23 @@ export default async function handler(req, res) {
         });
     }
     else if (req.method === "GET") {
-        const { postId, sortBy, page = 1, limit = 10 } = req.query; // pagination logic influenced by ChatGPT
-
+        const { postId, depth = 10, page = 1, limit = 10 } = req.query;
+    
         if (!postId) {
             return res.status(400).json({ message: "Blog Post ID is required" });
         }
-        
-        const post = await prisma.blogPost.findUnique({
-            where: { id: parseInt(postId) },
-        });
-        if (!post) {
-            return res.status(404).json({ message: "Blog Post not found" });
-        }
-
-        const skip = (parseInt(page) - 1) * parseInt(limit);
-
+    
         try {
+            // Fetch top-level comments with dynamic depth of replies
             const comments = await prisma.comment.findMany({
                 where: { postId: parseInt(postId), hidden: false, parentCommentId: null },
                 include: {
                     User: {
                         select: { id: true, firstName: true, email: true },
                     },
-                    Replies: {
-                        where: { hidden: false },
-                        include: {
-                            User: {
-                                select: { id: true, firstName: true, email: true },
-                            },
-                        },
-                    },
+                    ...buildRepliesInclude(depth), // Dynamically include replies
                 },
-                orderBy: sortBy === "top" ? { rating: "desc" } : { rating: "asc" },
-                skip: skip,
+                skip: (parseInt(page) - 1) * parseInt(limit),
                 take: parseInt(limit),
             });
         
@@ -102,7 +93,7 @@ export default async function handler(req, res) {
                 limit: parseInt(limit),
             });
         } catch (error) {
-            return res.status(500).json({ message: "Error fetching comment." + error });
+            return res.status(500).json({ message: "Error fetching comments." + error });
         }
     }
     else {

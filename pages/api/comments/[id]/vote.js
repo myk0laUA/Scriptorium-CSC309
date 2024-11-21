@@ -5,13 +5,12 @@ export default async function handler(req, res) {
     await authenticateJWT(req, res, async () => {
         if (req.method === "POST") {
             const { id } = req.query;
+            const userId = req.user.id;
             const { vote } = req.body;
 
             if (!id || !vote || !["upvote", "downvote"].includes(vote)) {
-                return res.status(400).json({ message: "Comment ID and Vote are required" + id + vote});
+                return res.status(400).json({ message: "Comment ID and Vote are required" });
             }
-
-            const user = req.user;
 
             const comment = await prisma.comment.findUnique({
                 where: { id: parseInt(id) },
@@ -20,34 +19,99 @@ export default async function handler(req, res) {
                     downvotedByUsers: true,
                 },
             });
+
             if (!comment) {
                 return res.status(404).json({ message: "Comment not found" });
             }
 
-            // Check that the user hasn't already voted
-            const hasUpvoted = comment.upvotedByUsers.some(userVote => userVote.id === user.id);
-            const hasDownvoted = comment.downvotedByUsers.some(userVote => userVote.id === user.id);
+            let updatedComment;
 
-            if ((hasUpvoted && vote === "upvote" ) || (hasDownvoted && vote === "downvote")) {
-                return res.status(400).json({ message: "User has already voted on this comment" });
+            const hasUpvoted = comment.upvotedByUsers.some(user => user.id === userId);
+            const hasDownvoted = comment.downvotedByUsers.some(user => user.id === userId);
+
+            if (vote === 'upvote') {
+                if (hasUpvoted) {
+                    updatedComment = await prisma.comment.update({
+                        where: { id: parseInt(id) },
+                        data: {
+                            upvotedByUsers: {
+                                disconnect: { id: userId },
+                            },
+                            rating: comment.rating - 1,
+                        },
+                    });
+                } else if (hasDownvoted) {
+                    updatedComment = await prisma.comment.update({
+                        where: { id: parseInt(id) },
+                        data: {
+                            downvotedByUsers: {
+                                disconnect: { id: userId },
+                            },
+                            upvotedByUsers: {
+                                connect: { id: userId },
+                            },
+                            rating: comment.rating + 2,
+                        },
+                    });
+                } else {
+                    updatedComment = await prisma.comment.update({
+                        where: { id: parseInt(id) },
+                        data: {
+                            upvotedByUsers: {
+                                connect: { id: userId },
+                            },
+                            rating: comment.rating + 1,
+                        },
+                    });
+                }
+            } else if (vote === 'downvote') {
+                if (hasDownvoted) {
+                    updatedComment = await prisma.comment.update({
+                        where: { id: parseInt(id) },
+                        data: {
+                            downvotedByUsers: {
+                                disconnect: { id: userId },
+                            },
+                            rating: comment.rating + 1,
+                        },
+                    });
+                } else if (hasUpvoted) {
+                    updatedComment = await prisma.comment.update({
+                        where: { id: parseInt(id) },
+                        data: {
+                            upvotedByUsers: {
+                                disconnect: { id: userId },
+                            },
+                            downvotedByUsers: {
+                                connect: { id: userId },
+                            },
+                            rating: comment.rating - 2,
+                        },
+                    });
+                } else {
+                    updatedComment = await prisma.comment.update({
+                        where: { id: parseInt(id) },
+                        data: {
+                            downvotedByUsers: {
+                                connect: { id: userId },
+                            },
+                            rating: comment.rating - 1,
+                        },
+                    });
+                }
+            } else {
+                return res.status(400).json({ message: "Invalid vote type" });
             }
 
-            let updateData = {};
-            if (vote === "upvote") {
-            updateData = { rating: comment.rating + 1, upvotedByUsers: { connect: { id: user.id } } };
-            } else if (vote === "downvote") {
-            updateData = { rating: comment.rating - 1, downvotedByUsers: { connect: { id: user.id } } };
-            }
+            updatedComment = await prisma.comment.findUnique({
+                where: { id: parseInt(id) },
+                include: {
+                    upvotedByUsers: true,
+                    downvotedByUsers: true,
+                },
+            });
 
-            try {
-                const updatedComment = await prisma.comment.update({
-                    where: { id: parseInt(id) },
-                    data: updateData,
-                });
-                return res.status(200).json(updatedComment);
-            } catch (error) {
-                return res.status(500).json({ error: "Failed to update vote" + error + updateData.upvotes});
-            }
+            return res.status(200).json(updatedComment);
         }
         else {
             return res.status(405).json({ message: "Method Not Allowed" });
