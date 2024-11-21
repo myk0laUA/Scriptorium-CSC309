@@ -16,6 +16,6 @@ export default async function authenticateJWT(req, res, next) {
         next(); 
 
     } catch (err) {
-        return res.status(403).json({ message: 'Invalid token' });
+        return res.status(403).json({ error: 'You are not logged in' });
     }
 }

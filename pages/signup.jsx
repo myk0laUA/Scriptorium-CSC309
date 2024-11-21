@@ -178,9 +178,9 @@ const SignUp = () => {
 
             {success && (
                 <div className="mt-4">
-                <Link href="/loggedin">
+                <Link href="/login">
                     <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">
-                    Proceed
+                    Log In
                     </button>
                 </Link>
                 </div>
