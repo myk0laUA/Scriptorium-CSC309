@@ -9,27 +9,57 @@ const BlogPosts = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterDescription, setFilterDescription] = useState('');
+  const [filterTemplateMention, setFilterTemplateMention] = useState('');
+  const [filterTags, setFilterTags] = useState('');
+  const [sortOption, setSortOption] = useState('oldest');
+
+
+
+
+  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention) => {
+    try {
+
+      let response;
+
+      if (templateMention) {
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}`);
+
+      } else {
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}`);
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch blog posts');
+      }
+
+      const data = await response.json();
+      setBlogPosts(data.data); 
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false); 
+    }
+  };
 
   useEffect(() => {
-    const fetchBlogPosts = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/blogPost');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch blog posts');
-        }
-
-        const data = await response.json();
-        setBlogPosts(data.data); 
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false); 
-      }
-    };
-
     fetchBlogPosts();
   }, []);
+
+  const handleFilterSubmit = () => {
+    fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention); 
+    setShowFilterModal(false);
+  };
+
+  const openFilterModal = () => {
+    setShowFilterModal(true);
+  };
+
+  const closeFilterModal = () => {
+    setShowFilterModal(false);
+  };  
 
   const handleDelete = async (id) => {
     try {
@@ -74,18 +104,30 @@ const BlogPosts = () => {
         },
         body: JSON.stringify({ vote }),
       });
-
-      const result = await response.json();
       
-      if (response.ok) {
-        
-      } else {
+      if (!response.ok) {
         throw new Error(result.error || 'Failed to vote');
       }
+
+      const updatedPost = await response.json();
+
+      setBlogPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === id ? { ...post, rating: updatedPost.rating } : post
+        )
+      );
+
     } catch (err) {
       setError(err.message);
     }
   };
+
+  const handleSortChange = (e) => {
+    const selectedSort = e.target.value;
+    setSortOption(selectedSort);
+    fetchBlogPosts(filterTitle, filterDescription, filterTags, selectedSort, filterTemplateMention);
+  };
+
 
   if (loading) return <div>Loading blog posts...</div>;
   
@@ -102,11 +144,80 @@ const BlogPosts = () => {
           </button>
         </Link>
 
-        <button className="bg-gray-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-gray-600">
-          Filter Results
+        <button 
+          onClick={openFilterModal}
+          className="bg-gray-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-gray-600"
+        >  
+          Filter
         </button>
-      </div>
 
+        {showFilterModal && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg relative">
+            <h2 className="text-2xl font-semibold mb-4">Filter Blog Posts</h2>
+            <input
+              type="text"
+              value={filterTitle}
+              onChange={(e) => setFilterTitle(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Enter title to filter"
+            />
+            <input
+              type="text"
+              value={filterDescription}
+              onChange={(e) => setFilterDescription(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Enter description to filter"
+            />
+            <input
+              type="text"
+              value={filterTags}
+              onChange={(e) => setFilterTags(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Enter tags to filter"
+            />
+            <input
+              type="text"
+              value={filterTemplateMention}
+              onChange={(e) => setFilterTemplateMention(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Search for a particular Template mentioned"
+            />
+
+
+            <div className="flex justify-between">
+              <button
+                onClick={handleFilterSubmit}
+                className="bg-green-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-600"
+              >
+                Apply Filter
+              </button>
+              <button
+                onClick={closeFilterModal}
+                className="bg-gray-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <label htmlFor="sortOptions" className="text-gray-700 text-xl font-medium">
+          Sort By:
+      </label>
+
+      <select
+        id="sortOptions"
+        value={sortOption}
+        onChange={handleSortChange}
+        className="bg-white text-gray-800 px-6 py-3 rounded-lg text-xl border border-gray-300"
+      >
+        <option value="oldest">Date Added (Oldest)</option>
+        <option value="valued">Valued</option>
+        <option value="controversial">Controversial</option>
+      </select>
+    </div>
       
       <div className="space-y-6">
         {blogPosts.map((post) => (
@@ -121,6 +232,11 @@ const BlogPosts = () => {
             <div className="flex justify-between items-center">
               <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
               <span className="text-sm text-gray-500">Author: {post.author.username}</span>
+            </div>
+
+            <div className="flex items-center text-yellow-500 mb-4">
+              <strong>Rating:</strong>
+              <span className="ml-2">{post.rating}</span>
             </div>
 
             <p className="text-gray-700 mb-2">{post.description}</p>
