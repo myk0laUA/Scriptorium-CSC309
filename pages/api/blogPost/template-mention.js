@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
 
+    // returns blog posts that mention a particular template (in either their title or their description)
     if (req.method == "GET") {
 
         const { name, page = 1, limit = 10 } = req.query;
