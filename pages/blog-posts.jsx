@@ -15,20 +15,27 @@ const BlogPosts = () => {
   const [filterTemplateMention, setFilterTemplateMention] = useState('');
   const [filterTags, setFilterTags] = useState('');
   const [sortOption, setSortOption] = useState('oldest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    setIsLoggedIn(!!token); 
+  }, []);  
 
-
-  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention) => {
+  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, page = 1, limit = 10) => {
     try {
 
       let response;
 
       if (templateMention) {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}`);
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}&page=${page}&limit=${limit}`);
 
       } else {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}`);
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&page=${page}&limit=${limit}`);
       }
       
       if (!response.ok) {
@@ -37,6 +44,11 @@ const BlogPosts = () => {
 
       const data = await response.json();
       setBlogPosts(data.data); 
+      setCurrentPage(data.page);
+      setLimit(data.limit);
+      setTotalPages(Math.ceil(data.totalCount / limit));
+
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,6 +59,23 @@ const BlogPosts = () => {
   useEffect(() => {
     fetchBlogPosts();
   }, []);
+
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, nextPage, limit);
+      setCurrentPage(nextPage);
+    }
+  };
+  
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, prevPage, limit);
+      setCurrentPage(prevPage);
+    }
+  };
 
   const handleFilterSubmit = () => {
     fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention); 
@@ -184,7 +213,6 @@ const BlogPosts = () => {
               placeholder="Search for a particular Template mentioned"
             />
 
-
             <div className="flex justify-between">
               <button
                 onClick={handleFilterSubmit}
@@ -269,7 +297,48 @@ const BlogPosts = () => {
         ))}
       </div>
 
-      <Link href="/">
+      <div className="flex justify-between mt-6">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+        >
+          Previous
+        </button>
+        
+        <label htmlFor="limitOptions" className="text-gray-700 text-xl font-medium">
+          Posts per page:
+        </label>
+        <select
+          id="limitOptions"
+          value={limit}
+          onChange={(e) => {
+            const selectedLimit = parseInt(e.target.value);
+            setLimit(selectedLimit);
+            fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, 1, selectedLimit);
+          }}
+          className="bg-white text-gray-800 px-6 py-3 rounded-lg text-xl border border-gray-300"
+        >
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+
+        <span className="text-gray-700">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+        >
+          Next
+        </button>
+      </div>
+
+      <Link href={isLoggedIn ? "/loggedin" : "/"}>
         <button
         className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 w-full"
         >
