@@ -259,7 +259,14 @@ const BlogPosts = () => {
 
             <div className="flex justify-between items-center">
               <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
-              <span className="text-sm text-gray-500">Author: {post.author.username}</span>
+              <div className="flex items-center space-x-2">
+                <img
+                  src={post.author.avatar}
+                  alt={`${post.author.username}'s avatar`}
+                  className="w-6 h-6 rounded-full"
+                />
+                <span className="text-sm text-gray-500">Author: {post.author.username}</span>
+              </div>
             </div>
 
             <div className="flex items-center text-yellow-500 mb-4">
