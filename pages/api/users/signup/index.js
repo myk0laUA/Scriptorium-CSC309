@@ -10,6 +10,8 @@ const avaliableAvatars = [
     'http://localhost:3000/avatars/avatar1.png',
     'http://localhost:3000/avatars/avatar2.png',
     'http://localhost:3000/avatars/avatar3.png',
+    'http://localhost:3000/avatars/avatar4.png',
+    'http://localhost:3000/avatars/avatar5.png'
 ];
 
 // Creates a new user

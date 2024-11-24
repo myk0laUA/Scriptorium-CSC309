@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+import './avatar-selection.css';
+
+const availableAvatars = [ 
+    'http://localhost:3000/avatars/avatar1.png',
+    'http://localhost:3000/avatars/avatar2.png',
+    'http://localhost:3000/avatars/avatar3.png',
+    'http://localhost:3000/avatars/avatar4.png',
+    'http://localhost:3000/avatars/avatar5.png'
+];
+
 const EditProfile = () => {
     const [formData, setFormData] = useState({
         email: '',
@@ -54,6 +64,13 @@ const EditProfile = () => {
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
+        }));
+    };
+
+    const handleAvatarSelect = (avatar) => {
+        setFormData((prevData) => ({
+          ...prevData,
+          avatar,
         }));
     };
 
@@ -124,15 +141,23 @@ const EditProfile = () => {
                 </div>
 
                 <div className="mb-4">
-                <label className="block text-gray-700">Avatar</label>
-                <input
-                    type="text"
-                    name="avatar"
-                    value={formData.avatar}
-                    onChange={handleChange}
-                    className="w-full p-2 mt-2 border border-gray-300 rounded"
-                />
-                </div>
+                    <label className="block text-gray-700">Select an Avatar</label>
+                    <div className="avatar-selection">
+                        {availableAvatars.map((avatar) => (
+                            <div
+                                key={avatar}
+                                className={`avatar-container ${formData.avatar === avatar ? 'selected' : ''}`}
+                                onClick={() => handleAvatarSelect(avatar)}
+                            >
+                            <img
+                                src={avatar}
+                                alt={`Avatar`}
+                                className="avatar"
+                            />
+                        </div>
+                        ))}
+                    </div>
+                </div>  
 
                 <div className="mb-4">
                 <label className="block text-gray-700">Phone Number</label>
