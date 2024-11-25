@@ -1,4 +1,6 @@
-import prisma from "@/utils/db";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 import authenticateJWT from "../../protected/authorization";
 
 export default async function handler(req, res) {
@@ -18,21 +20,40 @@ export default async function handler(req, res) {
             let content, totalItems;
             if (contentType === "post") {
                 content = await prisma.blogPost.findMany({
-                    // order by number of reports if sortByReports is true
+                    where: {
+                        numReports: {
+                            gt: 0,
+                        },
+                    },
                     orderBy: sortByReports === "true" ? { numReports: "desc" } : undefined,
                     skip: skip,
                     take: parseInt(limit),
                 });
-                totalItems = await prisma.blogPost.count();
-            }
-            else {
+                totalItems = await prisma.blogPost.count({
+                    where: {
+                        numReports: {
+                            gt: 0,
+                        },
+                    },
+                });
+            } else {
                 content = await prisma.comment.findMany({
-                    // order by number of reports if sortByReports is true
+                    where: {
+                        numReports: {
+                            gt: 0,
+                        },
+                    },
                     orderBy: sortByReports === "true" ? { numReports: "desc" } : undefined,
                     skip: skip,
                     take: parseInt(limit),
                 });
-                totalItems = await prisma.comment.count();
+                totalItems = await prisma.comment.count({
+                    where: {
+                        numReports: {
+                            gt: 0,
+                        },
+                    },
+                });
             }
 
             return res.status(200).json({
@@ -41,9 +62,7 @@ export default async function handler(req, res) {
                 page: parseInt(page),
                 totalPages: Math.ceil(totalItems / parseInt(limit)),
             });
-        }
-
-        else {
+        } else {
             return res.status(405).json({ message: "Method Not Allowed" });
         }
     });
