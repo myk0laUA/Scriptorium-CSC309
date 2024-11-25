@@ -1,0 +1,30 @@
+.avatar-selection {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.avatar-container {
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 5px;
+    transition: border-color 0.3s ease-in-out, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.avatar-container:hover {
+    transform: scale(1.1);
+}
+
+.avatar-container.selected {
+    border-color: #1e90ff; 
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; 
+}
