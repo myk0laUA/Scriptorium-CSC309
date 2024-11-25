@@ -1,11 +1,18 @@
-import prisma from "@/utils/db";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient(); 
 import authenticateJWT from "../protected/authorization";
 
 function buildRepliesInclude(depth) {
     if (depth === 0) return {};
     return {
         Replies: {
-            include: buildRepliesInclude(depth - 1),
+            include: {
+                User: {
+                    select: { id: true, firstName: true, email: true, avatar: true },
+                },
+                ...buildRepliesInclude(depth - 1),
+            },
             where: { hidden: false },
         },
     };
@@ -67,10 +74,19 @@ export default async function handler(req, res) {
         });
     }
     else if (req.method === "GET") {
-        const { postId, depth = 10, page = 1, limit = 10 } = req.query;
+        const { postId, depth = 10, page = 1, limit = 10, sort = 'recent' } = req.query;
     
         if (!postId) {
             return res.status(400).json({ message: "Blog Post ID is required" });
+        }
+
+        let orderBy;
+        if (sort === 'top') {
+            orderBy = { rating: 'desc' };
+        } else if (sort === 'controversial') {
+            orderBy = { rating: 'asc' };
+        } else {
+            orderBy = { createdAt: 'desc' }; // Default to sorting by recent
         }
     
         try {
@@ -79,10 +95,11 @@ export default async function handler(req, res) {
                 where: { postId: parseInt(postId), hidden: false, parentCommentId: null },
                 include: {
                     User: {
-                        select: { id: true, firstName: true, email: true },
+                        select: { id: true, firstName: true, email: true, avatar: true },
                     },
                     ...buildRepliesInclude(depth), // Dynamically include replies
                 },
+                orderBy,
                 skip: (parseInt(page) - 1) * parseInt(limit),
                 take: parseInt(limit),
             });

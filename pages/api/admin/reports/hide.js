@@ -1,4 +1,6 @@
-import prisma from "@/utils/db";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 import authenticateJWT from "../../protected/authorization";
 
 export default async function handler(req, res) {
