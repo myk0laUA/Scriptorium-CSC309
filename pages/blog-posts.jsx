@@ -484,6 +484,7 @@ const BlogPosts = () => {
                   ? 'text-red-500 hover:text-red-600'
                   : 'text-gray-500 cursor-default'
               }`}
+              disabled={post.author.id !== userId}
             >
               <FaTrash size={15} />
             </button>
@@ -543,6 +544,7 @@ const BlogPosts = () => {
                     ? 'bg-blue-500 text-white hover:bg-blue-600'
                     : 'bg-gray-500 text-white cursor-default'
                 }`}
+                disabled={post.author.id !== userId}
               >
                 Edit
               </button>

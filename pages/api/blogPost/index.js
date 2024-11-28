@@ -183,7 +183,7 @@ export default async function handler(req, res) {
                     take: take,
                 });
             
-            } else if (sort === 'oldest') {
+            } else if (sort === 'oldest' || !sort) {
 
                 blogPosts = await prisma.blogPost.findMany({
                     where: queryConditions,
