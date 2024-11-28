@@ -22,10 +22,18 @@ const BlogPosts = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notification, setNotification] = useState('');
+  const [userId, setUserId] = useState(null);
+  
+
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     setIsLoggedIn(!!token); 
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+      setUserId(decodedToken.id);
+      console.log('userId:', decodedToken.id, typeof decodedToken.id);
+    }
   }, []);  
 
   const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, page = 1, limit = 10) => {
@@ -42,10 +50,14 @@ const BlogPosts = () => {
       }
 
       const data = await response.json();
-      setBlogPosts(data.data); 
+
+      const visiblePosts = data.data.filter((post) => !post.hidden);
+
+      setBlogPosts(visiblePosts); 
       setCurrentPage(data.page);
       setLimit(data.limit);
       setTotalPages(Math.ceil(data.totalCount / limit));
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -343,7 +355,14 @@ const BlogPosts = () => {
 
       setBlogPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.id === id ? { ...post, rating: updatedPost.rating } : post
+          post.id === id
+            ? {
+                ...post,
+                rating: updatedPost.rating,
+                upvotedByUsers: updatedPost.upvotedByUsers,
+                downvotedByUsers: updatedPost.downvotedByUsers,
+              }
+            : post
         )
       );
 
@@ -460,7 +479,11 @@ const BlogPosts = () => {
           <div key={post.id} className="bg-white p-6 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 relative">
             <button
               onClick={() => handleDelete(post.id)}
-              className="text-red-500 hover:text-red-600 absolute top-4 right-4"
+              className={`absolute top-4 right-4 ${
+                post.author.id === userId
+                  ? 'text-red-500 hover:text-red-600'
+                  : 'text-gray-500 cursor-default'
+              }`}
             >
               <FaTrash size={15} />
             </button>
@@ -491,13 +514,17 @@ const BlogPosts = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => handleVote(post.id, 'upvote')}
-                className="text-green-500 hover:text-green-600"
+                className={`${
+                  post.upvotedByUsers.some((user) => user.id === userId) ? 'text-blue-500' : 'text-gray-500'
+                } hover:text-blue-600`}
               >
                 <FaThumbsUp size={20} />
               </button>
               <button
                 onClick={() => handleVote(post.id, 'downvote')}
-                className="text-red-500 hover:text-red-600"
+                className={`${
+                  post.downvotedByUsers.some((user) => user.id === userId) ? 'text-blue-500' : 'text-gray-500'
+                } hover:text-blue-600`}
               >
                 <FaThumbsDown size={20} />
               </button>
@@ -510,7 +537,13 @@ const BlogPosts = () => {
             </div>
 
             <Link href={`/edit-post/${post.id}`}>
-              <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">
+              <button 
+                className={`mt-4 px-4 py-2 rounded w-full ${
+                  post.author.id === userId
+                    ? 'bg-blue-500 text-white hover:bg-blue-600'
+                    : 'bg-gray-500 text-white cursor-default'
+                }`}
+              >
                 Edit
               </button>
             </Link>
