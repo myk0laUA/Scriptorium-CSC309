@@ -15,8 +15,9 @@ const BlogPosts = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterTitle, setFilterTitle] = useState('');
   const [filterDescription, setFilterDescription] = useState('');
-  const [filterTemplateMention, setFilterTemplateMention] = useState('');
   const [filterTags, setFilterTags] = useState('');
+  const [filterTemplateMention, setFilterTemplateMention] = useState('');
+  const [filterLinkToTemplates, setFilterLinkToTemplates] = useState('');
   const [sortOption, setSortOption] = useState('oldest');
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -24,6 +25,8 @@ const BlogPosts = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notification, setNotification] = useState('');
   const [userId, setUserId] = useState(null);
+  const [templates, setTemplates] = useState([]);
+
   
   const router = useRouter();
 
@@ -37,13 +40,32 @@ const BlogPosts = () => {
     }
   }, []);  
 
-  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, page = 1, limit = 10) => {
+  useEffect(() => {
+    if (showFilterModal) {
+      const fetchTemplates = async () => {
+        try {
+          const response = await fetch('http://localhost:3000/api/templates/public?limit=100');
+          if (!response.ok) {
+            throw new Error('Failed to fetch templates');
+          }
+          const data = await response.json();
+          setTemplates(data.templates);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      fetchTemplates();
+    }
+  }, [showFilterModal]);
+
+  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, linkToTemplates = '', page = 1, limit = 10) => {
     try {
       let response;
       if (templateMention) {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}&page=${page}&limit=${limit}`);
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}&linkToTemplates=${linkToTemplates}&page=${page}&limit=${limit}`);
       } else {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&page=${page}&limit=${limit}`);
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&linkToTemplates=${linkToTemplates}&page=${page}&limit=${limit}`);
       }
       
       if (!response.ok) {
@@ -280,7 +302,7 @@ const BlogPosts = () => {
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
-      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, nextPage, limit);
+      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates, nextPage, limit);
       setCurrentPage(nextPage);
     }
   };
@@ -288,14 +310,30 @@ const BlogPosts = () => {
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       const prevPage = currentPage - 1;
-      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, prevPage, limit);
+      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates, prevPage, limit);
       setCurrentPage(prevPage);
     }
   };
 
   const handleFilterSubmit = () => {
-    fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention); 
+    fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates); 
     setShowFilterModal(false);
+  };
+
+  const handleTemplateChange = (e) => {
+    setFilterTemplateMention(e.target.value);
+  };
+
+  const handleLinkToTemplatesChange = (e) => {
+    const { options } = e.target;
+    const selectedTemplateIds = [];
+    
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        selectedTemplateIds.push(Number(options[i].value));
+      }
+    }
+    setFilterLinkToTemplates(selectedTemplateIds.join(','));
   };
 
   const openFilterModal = () => {
@@ -323,7 +361,6 @@ const BlogPosts = () => {
       });
 
       if (response.ok) {
-        // Remove the deleted blog post from the state
         setBlogPosts(blogPosts.filter(post => post.id !== id));
       } else {
         throw new Error('Failed to delete the blog post');
@@ -468,15 +505,40 @@ const BlogPosts = () => {
               value={filterTags}
               onChange={(e) => setFilterTags(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded mb-4"
-              placeholder="Enter tags to filter"
+              placeholder="Enter tags to filter (use commas (,) to separate)"
             />
-            <input
-              type="text"
-              value={filterTemplateMention}
-              onChange={(e) => setFilterTemplateMention(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mb-4"
-              placeholder="Search for a particular Template mentioned"
-            />
+
+            <div className="mb-4">
+              <label className="block text-gray-400 text-m font-medium mb-2">Filter by templates linked (press Ctrl for multi-selection)</label>
+              <select
+                multiple
+                value={filterLinkToTemplates}
+                onChange={handleLinkToTemplatesChange}
+                className="w-full p-2 mt-2 border border-gray-300 rounded"
+              >
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}> 
+                    {template.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-400 text-m font-medium mb-2">Filter by template mentioned</label>
+              <select
+                value={filterTemplateMention}
+                onChange={handleTemplateChange}
+                className="w-full p-2 mt-2 border border-gray-300 rounded"
+              >
+                <option value="">No Filter</option>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.title}> 
+                    {template.title}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div className="flex justify-between">
               <button
@@ -596,18 +658,16 @@ const BlogPosts = () => {
               </button>
             </div>
 
-            <Link href={`/edit-post/${post.id}`}>
-              <button 
-                className={`mt-4 px-4 py-2 rounded w-full ${
-                  post.author.id === userId
-                    ? 'bg-blue-500 text-white hover:bg-blue-600'
-                    : 'bg-gray-500 text-white cursor-default'
-                }`}
-                disabled={post.author.id !== userId}
-              >
-                Edit
-              </button>
-            </Link>
+            {post.author.id === userId && (
+              <Link href={`/edit-post/${post.id}`}>
+                <button 
+                  className="mt-4 px-4 py-2 rounded w-full bg-blue-500 text-white hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+              </Link>
+            )}
+
             {post.templateId && (
               <div className="mt-4">
                 <button
@@ -681,7 +741,7 @@ const BlogPosts = () => {
           onChange={(e) => {
             const selectedLimit = parseInt(e.target.value);
             setLimit(selectedLimit);
-            fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, 1, selectedLimit);
+            fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates, 1, selectedLimit);
           }}
           className="bg-white text-gray-800 px-6 py-3 rounded-lg text-xl border border-gray-300"
         >
