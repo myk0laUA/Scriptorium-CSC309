@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash, FaThumbsUp, FaThumbsDown, FaFlag, FaEdit } from 'react-icons/fa';
 
-// Logic influenced by ChatGPT
 const Comment = ({
   comment,
   postId,
@@ -16,18 +15,7 @@ const Comment = ({
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState(comment?.body || '');
-  const [localComment, setLocalComment] = useState(
-    comment || {
-      id: null,
-      body: '',
-      upvotedByUsers: [],
-      downvotedByUsers: [],
-      Replies: [],
-      rating: 0,
-      userId: null,
-      User: {},
-    }
-  );
+  const [localComment, setLocalComment] = useState(comment);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -39,22 +27,23 @@ const Comment = ({
     }
   }, []);
 
-  const handleReply = () => {
-    if (!localComment?.id) {
-      setNotification('Invalid comment ID');
-      return;
+  // Sync localComment with comment prop
+  useEffect(() => {
+    setLocalComment(comment);
+  }, [comment]);
+
+  const handleReply = async () => {
+    try {
+      await handleAddComment(postId, localComment.id, reply);
+      setReply('');
+      setShowReplyForm(false);
+    } catch (err) {
+      setNotification('Failed to add reply. Please try again.');
+      setTimeout(() => setNotification(''), 3000);
     }
-    handleAddComment(postId, localComment.id, reply);
-    setReply('');
-    setShowReplyForm(false);
   };
 
   const handleVote = async (voteType) => {
-    if (!localComment?.id) {
-      setNotification('Invalid comment ID');
-      return;
-    }
-
     const alreadyUpvoted = localComment.upvotedByUsers?.some(
       (user) => user.id === currentUserId
     );
@@ -97,104 +86,10 @@ const Comment = ({
       rating: newUpvotedByUsers.length - newDownvotedByUsers.length,
     }));
 
-    // Make the API call
     try {
-      await handleVoteComment(
-        localComment.id,
-        postId,
-        voteType === (alreadyUpvoted || alreadyDownvoted ? null : voteType)
-      );
+      await handleVoteComment(localComment.id, postId, voteType);
     } catch (err) {
       setNotification('Failed to update vote. Please try again.');
-      setTimeout(() => setNotification(''), 3000);
-    }
-  };
-
-  const handleReportComment = async (commentId) => {
-    if (!commentId) {
-      setNotification('Invalid comment ID');
-      return;
-    }
-
-    try {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-          setNotification('You are not logged in');
-          setTimeout(() => setNotification(''), 3000);
-          return;
-        }
-
-        const response = await fetch(`http://localhost:3000/api/reports`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ contentId: commentId, contentType: 'comment' }),
-        });
-
-        if (response.status === 400) {
-          setNotification('You have already reported this comment.');
-          setTimeout(() => setNotification(''), 3000);
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error('Failed to report comment');
-        }
-
-        setNotification('Reported comment successfully');
-        setTimeout(() => setNotification(''), 3000);
-      }
-    } catch (err) {
-      setNotification(err.message);
-      setTimeout(() => setNotification(''), 3000);
-    }
-  };
-
-  const handleEditComment = async (commentId) => {
-    if (!commentId) {
-      setNotification('Invalid comment ID');
-      return;
-    }
-
-    try {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-          setNotification('You are not logged in');
-          setTimeout(() => setNotification(''), 3000);
-          return;
-        }
-
-        const response = await fetch(
-          `http://localhost:3000/api/comments/${commentId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ body: editedComment }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to update comment');
-        }
-
-        const updatedComment = await response.json();
-        setNotification('Comment updated successfully');
-        setTimeout(() => setNotification(''), 3000);
-        setIsEditing(false);
-        setLocalComment((prev) => ({
-          ...prev,
-          body: updatedComment.body,
-        }));
-      }
-    } catch (err) {
-      setNotification(err.message);
       setTimeout(() => setNotification(''), 3000);
     }
   };
@@ -214,7 +109,7 @@ const Comment = ({
           />
         )}
         <span className="font-semibold text-gray-800 dark:text-gray-200">
-          {localComment?.User?.firstName || 'Anonymous'}
+          {localComment?.User?.firstName || 'You'}
         </span>
       </div>
       <div className="flex items-center justify-between">

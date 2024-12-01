@@ -11,6 +11,8 @@ function buildRepliesInclude(depth) {
                 User: {
                     select: { id: true, firstName: true, email: true, avatar: true },
                 },
+                upvotedByUsers: true, 
+                downvotedByUsers: true,
                 ...buildRepliesInclude(depth - 1),
             },
             where: { hidden: false },
@@ -73,6 +75,7 @@ export default async function handler(req, res) {
             }
         });
     }
+    
     else if (req.method === "GET") {
         const { postId, depth = 10, page = 1, limit = 10, sort = 'recent' } = req.query;
     
