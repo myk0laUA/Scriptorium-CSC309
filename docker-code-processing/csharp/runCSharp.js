@@ -30,12 +30,12 @@ function executeCSharpCode(code, input) {
             }
 
             if (error) {
-                return reject(`Error: ${error.message}`);
+                resolve(`Error: ${error.message}`); // Resolve with the error message
+            } else if (stderr) {
+                resolve(stderr.trim()); // Resolve with trimmed stderr output
+            } else {
+                resolve(stdout.trim()); // Resolve with stdout output
             }
-            if (stderr) {
-                return reject(`Stderr: ${stderr}`);
-            }
-            resolve(stdout.trim());
         });
 
         // Write input to the Docker container's stdin

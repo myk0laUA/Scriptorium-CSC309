@@ -26,11 +26,11 @@ function executeJavaCode(code, input) {
             fs.unlinkSync(codeFile);
 
             if (error) {
-                reject(`Error: ${error.message}`);
+                resolve(`Error: ${error.message}`); // Resolve with the error message
             } else if (stderr) {
-                reject(`Stderr: ${stderr}`);
+                resolve(stderr.trim()); // Resolve with trimmed stderr output
             } else {
-                resolve(stdout.trim());
+                resolve(stdout.trim()); // Resolve with stdout output
             }
         });
 
