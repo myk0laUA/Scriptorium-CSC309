@@ -455,8 +455,6 @@ const BlogPosts = () => {
       }
     };
 
-  if (loading) return <div>Loading blog posts...</div>;
-
   return (
     <Layout>
     <div className="p-6">
