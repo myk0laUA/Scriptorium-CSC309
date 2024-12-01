@@ -83,12 +83,14 @@ const MainPage = () => {
                       </span>
                     </Link>
                   </div>
-                  <a
-                    href="/editor"
-                    className="bg-purple-500 dark:bg-purple-700 text-white px-28 py-4 rounded-lg text-xl hover:bg-purple-600 dark:hover:bg-purple-800 transition duration-300 mt-4"
-                  >
-                    Launch Editor
-                  </a>
+
+                  <div className="mt-16">
+                    <Link href="/editor">
+                      <span className="bg-purple-500 dark:bg-purple-700 text-white px-28 py-4 rounded-lg text-xl hover:bg-purple-600 dark:hover:bg-purple-800 transition duration-300">                  
+                      Launch Editor
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
