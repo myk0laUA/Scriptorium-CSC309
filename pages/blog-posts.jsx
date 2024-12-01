@@ -4,6 +4,7 @@ import '../app/globals.css';
 import { FaTrash, FaThumbsUp, FaThumbsDown, FaFlag } from 'react-icons/fa';
 import Comment from './comment';
 import Layout from '../components/Layout';
+import { useRouter } from 'next/router';
 
 {/* Generated with ChatGPT */}  
 const BlogPosts = () => {
@@ -15,8 +16,9 @@ const BlogPosts = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterTitle, setFilterTitle] = useState('');
   const [filterDescription, setFilterDescription] = useState('');
-  const [filterTemplateMention, setFilterTemplateMention] = useState('');
   const [filterTags, setFilterTags] = useState('');
+  const [filterTemplateMention, setFilterTemplateMention] = useState('');
+  const [filterLinkToTemplates, setFilterLinkToTemplates] = useState('');
   const [sortOption, setSortOption] = useState('oldest');
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -24,7 +26,9 @@ const BlogPosts = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notification, setNotification] = useState('');
   const [userId, setUserId] = useState(null);
-  
+  const [templates, setTemplates] = useState([]);
+  const router = useRouter();
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     setIsLoggedIn(!!token); 
@@ -35,13 +39,32 @@ const BlogPosts = () => {
     }
   }, []);  
 
-  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, page = 1, limit = 10) => {
+  useEffect(() => {
+    if (showFilterModal) {
+      const fetchTemplates = async () => {
+        try {
+          const response = await fetch('http://localhost:3000/api/templates/public?limit=100');
+          if (!response.ok) {
+            throw new Error('Failed to fetch templates');
+          }
+          const data = await response.json();
+          setTemplates(data.templates);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      fetchTemplates();
+    }
+  }, [showFilterModal]);
+
+  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, linkToTemplates = '', page = 1, limit = 10) => {
     try {
       let response;
       if (templateMention) {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}&page=${page}&limit=${limit}`);
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}&linkToTemplates=${linkToTemplates}&page=${page}&limit=${limit}`);
       } else {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&page=${page}&limit=${limit}`);
+        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&linkToTemplates=${linkToTemplates}&page=${page}&limit=${limit}`);
       }
       
       if (!response.ok) {
@@ -51,6 +74,8 @@ const BlogPosts = () => {
       const data = await response.json();
 
       const visiblePosts = data.data.filter((post) => !post.hidden);
+
+      console.log("Fetched blog posts:", visiblePosts);
 
       setBlogPosts(visiblePosts); 
       setCurrentPage(data.page);
@@ -276,7 +301,7 @@ const BlogPosts = () => {
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
-      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, nextPage, limit);
+      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates, nextPage, limit);
       setCurrentPage(nextPage);
     }
   };
@@ -284,14 +309,30 @@ const BlogPosts = () => {
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       const prevPage = currentPage - 1;
-      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, prevPage, limit);
+      fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates, prevPage, limit);
       setCurrentPage(prevPage);
     }
   };
 
   const handleFilterSubmit = () => {
-    fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention); 
+    fetchBlogPosts(filterTitle, filterDescription, filterTags, sortOption, filterTemplateMention, filterLinkToTemplates); 
     setShowFilterModal(false);
+  };
+
+  const handleTemplateChange = (e) => {
+    setFilterTemplateMention(e.target.value);
+  };
+
+  const handleLinkToTemplatesChange = (e) => {
+    const { options } = e.target;
+    const selectedTemplateIds = [];
+    
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        selectedTemplateIds.push(Number(options[i].value));
+      }
+    }
+    setFilterLinkToTemplates(selectedTemplateIds.join(','));
   };
 
   const openFilterModal = () => {
@@ -319,7 +360,6 @@ const BlogPosts = () => {
       });
 
       if (response.ok) {
-        // Remove the deleted blog post from the state
         setBlogPosts(blogPosts.filter(post => post.id !== id));
       } else {
         throw new Error('Failed to delete the blog post');
@@ -380,6 +420,43 @@ const BlogPosts = () => {
     fetchComments(postId, sort);
   };
 
+    // Function to handle viewing the attached template
+    const handleViewTemplate = async (templateId) => {
+      try {
+        const token = localStorage.getItem('accessToken'); // generated by ChatGPT
+        if (!token) {
+          setError('You are not logged in');
+          return;
+        }
+    
+        // Fetch all templates (since public API doesn't provide single-template fetching)
+        const response = await fetch(`/api/templates/public`, {
+          headers: {
+            'Authorization': `Bearer ${token}`, // generated by ChatGPT
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch templates');
+        }
+    
+        // Filter the desired template by its ID
+        const data = await response.json();
+        const template = data.templates.find((t) => t.id === templateId);
+    
+        if (!template) {
+          throw new Error('Template not found');
+        }
+    
+        localStorage.setItem('selectedTemplate', JSON.stringify(template));
+        router.push('/editor');
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+  if (loading) return <div>Loading blog posts...</div>;
+
   return (
     <Layout>
     <div className="p-6">
@@ -434,13 +511,38 @@ const BlogPosts = () => {
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
             placeholder="Enter tags to filter"
           />
-          <input
-            type="text"
-            value={filterTemplateMention}
-            onChange={(e) => setFilterTemplateMention(e.target.value)}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-            placeholder="Search for a particular Template mentioned"
-          />
+          
+          <div className="mb-4">
+              <label className="block text-gray-400 text-m font-medium mb-2">Filter by templates linked (press Ctrl for multi-selection)</label>
+              <select
+                multiple
+                value={filterLinkToTemplates}
+                onChange={handleLinkToTemplatesChange}
+                className="w-full p-2 mt-2 border border-gray-300 rounded"
+              >
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}> 
+                    {template.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-400 text-m font-medium mb-2">Filter by template mentioned</label>
+            <select
+              value={filterTemplateMention}
+              onChange={handleTemplateChange}
+              className="w-full p-2 mt-2 border border-gray-300 rounded"
+            >
+              <option value="">No Filter</option>
+              {templates.map((template) => (
+                <option key={template.id} value={template.title}> 
+                  {template.title}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="flex justify-between">
             <button
@@ -480,78 +582,96 @@ const BlogPosts = () => {
     </div>
   </div>
       
-    <div className="space-y-6">
-    {blogPosts.map((post) => (
-      <div
-        key={post.id}
-        className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 relative"
-      >
-              {post.author.id === userId && (
+      <div className="space-y-6">
+        {blogPosts.map((post) => (
+          <div key={post.id} className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 relative">
+            {post.author.id === userId && (
+              <button
+              onClick={() => handleDelete(post.id)}
+              className="absolute top-4 right-4 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-500"
+            >
+              <FaTrash size={15} />
+            </button>
+          )}
+
+          <div className="flex justify-between items-center">
+              <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+                {post.title}
+              </h3>
+              <div className="flex items-center space-x-2">
+                <img
+                  src={post.author.avatar}
+                  alt={`${post.author.username}'s avatar`}
+                  className="w-6 h-6 rounded-full"
+                />
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Author: {post.author.username}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center text-yellow-500 mb-4">
+              <strong>Rating:</strong>
+              <span className="ml-2">{post.rating}</span>
+            </div>
+
+            <p className="text-gray-700 dark:text-gray-300 mb-2">{post.description}</p>
+
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <strong>Tags:</strong> {post.tags}
+            </div>
+
+            {/* Generated by ChatGPT */}  
+            {post.linkToTemplates && post.linkToTemplates.length > 0 && (
+              <div className="text-sm text-gray-500 mb-4">
+                <strong>Linked Templates:</strong>
+                <span>
+                  {post.linkToTemplates.map((link, index) => (
+                    <span key={link.templateId}>
+                      <span
+                        onClick={() => handleViewTemplate(link.templateId)}
+                        className="text-blue-500 cursor-pointer hover:text-blue-600"
+                      >
+                        {link.template.title}
+                        </span>
+
+                        {index < post.linkToTemplates.length - 1 && ', '}
+                    </span>
+                  ))}
+                </span>
+              </div>
+            )}
+              
+              <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => handleDelete(post.id)}
-                  className="absolute top-4 right-4 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-500"
+                  onClick={() => handleVote(post.id, 'upvote')}
+                  className={`${
+                    post.upvotedByUsers.some((user) => user.id === userId)
+                      ? 'text-blue-500 dark:text-blue-400'
+                      : 'text-gray-500 dark:text-gray-400'
+                  } hover:text-green-600 dark:hover:text-green-500`}
                 >
-                  <FaTrash size={15} />
+                  <FaThumbsUp size={20} />
                 </button>
-              )}
+                <button
+                  onClick={() => handleVote(post.id, 'downvote')}
+                  className={`${
+                    post.downvotedByUsers.some((user) => user.id === userId)
+                      ? 'text-blue-500 dark:text-blue-400'
+                      : 'text-gray-500 dark:text-gray-400'
+                  } hover:text-red-600 dark:hover:text-red-500`}
+                >
+                  <FaThumbsDown size={20} />
+                </button>
+                <button
+                  onClick={() => handleReportContent(post.id, 'post')}
+                  className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500"
+                >
+                  <FaFlag size={20} />
+                </button>
+              </div>
 
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
-            {post.title}
-          </h3>
-          <div className="flex items-center space-x-2">
-            <img
-              src={post.author.avatar}
-              alt={`${post.author.username}'s avatar`}
-              className="w-6 h-6 rounded-full"
-            />
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Author: {post.author.username}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center text-yellow-500 mb-4">
-          <strong>Rating:</strong>
-          <span className="ml-2">{post.rating}</span>
-        </div>
-
-        <p className="text-gray-700 dark:text-gray-300 mb-2">{post.description}</p>
-
-        <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-          <strong>Tags:</strong> {post.tags}
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => handleVote(post.id, 'upvote')}
-            className={`${
-              post.upvotedByUsers.some((user) => user.id === userId)
-                ? 'text-blue-500 dark:text-blue-400'
-                : 'text-gray-500 dark:text-gray-400'
-            } hover:text-green-600 dark:hover:text-green-500`}
-          >
-            <FaThumbsUp size={20} />
-          </button>
-          <button
-            onClick={() => handleVote(post.id, 'downvote')}
-            className={`${
-              post.downvotedByUsers.some((user) => user.id === userId)
-                ? 'text-blue-500 dark:text-blue-400'
-                : 'text-gray-500 dark:text-gray-400'
-            } hover:text-red-600 dark:hover:text-red-500`}
-          >
-            <FaThumbsDown size={20} />
-          </button>
-          <button
-            onClick={() => handleReportContent(post.id, 'post')}
-            className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500"
-          >
-            <FaFlag size={20} />
-          </button>
-        </div>
-
-        {post.author.id === userId && (
+              {post.author.id === userId && (
                 <Link href={`/edit-post/${post.id}`}>
                   <button className="mt-4 px-4 py-2 rounded bg-blue-500 dark:bg-blue-700 text-white hover:bg-blue-600 dark:hover:bg-blue-800">
                     Edit
@@ -559,9 +679,20 @@ const BlogPosts = () => {
                 </Link>
               )}
 
-        <hr className="my-6 border-gray-300 dark:border-gray-700" />
+            {post.templateId && (
+              <div className="mt-4">
+                <button
+                  onClick={() => handleViewTemplate(post.templateId)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  View Attached Template
+                </button>
+              </div>
+            )}
 
-        <div className="mt-6">
+            <hr className="my-6 border-gray-300 dark:border-gray-700" />
+
+            <div className="mt-6">
           <h4 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Comments
           </h4>
@@ -610,9 +741,9 @@ const BlogPosts = () => {
       </div>
     ))}
   </div>
+                
 
-
-  <div className="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
+<div className="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
     <button
       onClick={handlePreviousPage}
       disabled={currentPage === 1}
