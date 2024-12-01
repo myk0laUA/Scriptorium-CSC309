@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import Link from 'next/link';
 import '../app/globals.css';
 
 // Logic influenced by ChatGPT
@@ -70,18 +71,17 @@ const MainPage = () => {
               ) : (
                 <div className="flex flex-col items-center space-y-4">
                   <div className="flex space-x-4">
-                    <a
-                      href="/login"
-                      className="bg-blue-500 dark:bg-blue-700 text-white px-14 py-3 rounded-lg text-xl hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300"
-                    >
+                    <Link href="/login">
+                      <span className="bg-blue-500 dark:bg-blue-700 text-white px-14 py-3 rounded-lg text-xl hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300">
                       Log In
-                    </a>
-                    <a
-                      href="/signup"
-                      className="bg-green-500 dark:bg-green-700 text-white px-12 py-3 rounded-lg text-xl hover:bg-green-600 dark:hover:bg-green-800 transition duration-300"
-                    >
+                      </span>
+                    </Link>
+                  
+                    <Link href="/signup"> 
+                      <span className="bg-green-500 dark:bg-green-700 text-white px-12 py-3 rounded-lg text-xl hover:bg-green-600 dark:hover:bg-green-800 transition duration-300">
                       Sign Up
-                    </a>
+                      </span>
+                    </Link>
                   </div>
                   <a
                     href="/editor"

@@ -19,7 +19,7 @@ const BlogPosts = () => {
   const [filterTags, setFilterTags] = useState('');
   const [filterTemplateMention, setFilterTemplateMention] = useState('');
   const [filterLinkToTemplates, setFilterLinkToTemplates] = useState('');
-  const [sortOption, setSortOption] = useState('oldest');
+  const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -771,6 +771,7 @@ const BlogPosts = () => {
             filterTags,
             sortOption,
             filterTemplateMention,
+            filterLinkToTemplates,
             1,
             selectedLimit
           );
