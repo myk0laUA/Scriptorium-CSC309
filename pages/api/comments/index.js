@@ -11,6 +11,8 @@ function buildRepliesInclude(depth) {
                 User: {
                     select: { id: true, firstName: true, email: true, avatar: true },
                 },
+                upvotedByUsers: true, 
+                downvotedByUsers: true,
                 ...buildRepliesInclude(depth - 1),
             },
             where: { hidden: false },
