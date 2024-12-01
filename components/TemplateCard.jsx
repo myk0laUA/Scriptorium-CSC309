@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+// Logic influenced by ChatGPT
 const TemplateCard = ({ template, onDelete }) => {
   const [userId, setUserId] = useState(null);
   const router = useRouter();
@@ -38,14 +39,20 @@ const TemplateCard = ({ template, onDelete }) => {
   };
 
   return (
-    <div className="border p-4 rounded">
-      <h3 className="font-bold text-xl mb-2">{template.title}</h3>
-      <p className="text-gray-700 mb-2">{template.explanation}</p>
-      <p className="text-sm text-gray-500 mb-2">Tags: {template.tags}</p>
-      <div className="flex space-x-2 mt-2">
+    <div className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-4 rounded shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <h3 className="font-bold text-xl mb-2 text-gray-800 dark:text-gray-200">
+        {template.title}
+      </h3>
+      <p className="text-gray-700 dark:text-gray-300 mb-2">
+        {template.explanation}
+      </p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        Tags: {template.tags}
+      </p>
+      <div className="flex flex-wrap gap-2 mt-2">
         <button
           onClick={handleViewTemplate}
-          className="text-blue-500 hover:underline"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
         >
           View Template
         </button>
@@ -53,22 +60,21 @@ const TemplateCard = ({ template, onDelete }) => {
           <>
             <button
               onClick={handleEditTemplate}
-              className="text-green-500 hover:underline"
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
             >
               Edit
             </button>
             <button
               onClick={handleDeleteTemplate}
-              className="text-red-500 hover:underline"
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
             >
               Delete
             </button>
           </>
         ) : (
-          // Show "Fork Template" button for templates not owned by the user
           <button
             onClick={handleForkTemplate}
-            className="text-purple-500 hover:underline"
+            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors"
           >
             Fork Template
           </button>
