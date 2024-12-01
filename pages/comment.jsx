@@ -2,33 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { FaTrash, FaThumbsUp, FaThumbsDown, FaFlag, FaEdit } from 'react-icons/fa';
 
 // Logic influenced by ChatGPT
-const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handleVoteComment, depth = 0 }) => {
+const Comment = ({
+  comment,
+  postId,
+  handleAddComment,
+  handleDeleteComment,
+  handleVoteComment,
+  depth = 0,
+}) => {
   const [reply, setReply] = useState('');
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [notification, setNotification] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedComment, setEditedComment] = useState(comment.body);
-  const [localComment, setLocalComment] = useState(comment || { body: '', upvotedByUsers: [], downvotedByUsers: [], Replies: [] });
-
+  const [editedComment, setEditedComment] = useState(comment?.body || '');
+  const [localComment, setLocalComment] = useState(
+    comment || {
+      id: null,
+      body: '',
+      upvotedByUsers: [],
+      downvotedByUsers: [],
+      Replies: [],
+      rating: 0,
+      userId: null,
+      User: {},
+    }
+  );
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      const user = JSON.parse(atob(token.split('.')[1]));
-      setCurrentUserId(user.id);
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        const user = JSON.parse(atob(token.split('.')[1]));
+        setCurrentUserId(user.id);
+      }
     }
   }, []);
 
   const handleReply = () => {
+    if (!localComment?.id) {
+      setNotification('Invalid comment ID');
+      return;
+    }
     handleAddComment(postId, localComment.id, reply);
     setReply('');
     setShowReplyForm(false);
   };
 
   const handleVote = async (voteType) => {
-    const alreadyUpvoted = localComment.upvotedByUsers?.some((user) => user.id === currentUserId);
-    const alreadyDownvoted = localComment.downvotedByUsers?.some((user) => user.id === currentUserId);
+    if (!localComment?.id) {
+      setNotification('Invalid comment ID');
+      return;
+    }
+
+    const alreadyUpvoted = localComment.upvotedByUsers?.some(
+      (user) => user.id === currentUserId
+    );
+    const alreadyDownvoted = localComment.downvotedByUsers?.some(
+      (user) => user.id === currentUserId
+    );
 
     let newUpvotedByUsers = [...(localComment.upvotedByUsers || [])];
     let newDownvotedByUsers = [...(localComment.downvotedByUsers || [])];
@@ -36,17 +68,25 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
     // Optimistically update the state
     if (voteType === 'upvote') {
       if (alreadyUpvoted) {
-        newUpvotedByUsers = newUpvotedByUsers.filter((user) => user.id !== currentUserId);
+        newUpvotedByUsers = newUpvotedByUsers.filter(
+          (user) => user.id !== currentUserId
+        );
       } else {
         newUpvotedByUsers.push({ id: currentUserId });
-        newDownvotedByUsers = newDownvotedByUsers.filter((user) => user.id !== currentUserId);
+        newDownvotedByUsers = newDownvotedByUsers.filter(
+          (user) => user.id !== currentUserId
+        );
       }
     } else if (voteType === 'downvote') {
       if (alreadyDownvoted) {
-        newDownvotedByUsers = newDownvotedByUsers.filter((user) => user.id !== currentUserId);
+        newDownvotedByUsers = newDownvotedByUsers.filter(
+          (user) => user.id !== currentUserId
+        );
       } else {
         newDownvotedByUsers.push({ id: currentUserId });
-        newUpvotedByUsers = newUpvotedByUsers.filter((user) => user.id !== currentUserId);
+        newUpvotedByUsers = newUpvotedByUsers.filter(
+          (user) => user.id !== currentUserId
+        );
       }
     }
 
@@ -59,7 +99,11 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
 
     // Make the API call
     try {
-      await handleVoteComment(localComment.id, postId, voteType === (alreadyUpvoted || alreadyDownvoted ? null : voteType));
+      await handleVoteComment(
+        localComment.id,
+        postId,
+        voteType === (alreadyUpvoted || alreadyDownvoted ? null : voteType)
+      );
     } catch (err) {
       setNotification('Failed to update vote. Please try again.');
       setTimeout(() => setNotification(''), 3000);
@@ -67,35 +111,42 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
   };
 
   const handleReportComment = async (commentId) => {
+    if (!commentId) {
+      setNotification('Invalid comment ID');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        setNotification('You are not logged in');
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+          setNotification('You are not logged in');
+          setTimeout(() => setNotification(''), 3000);
+          return;
+        }
+
+        const response = await fetch(`http://localhost:3000/api/reports`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ contentId: commentId, contentType: 'comment' }),
+        });
+
+        if (response.status === 400) {
+          setNotification('You have already reported this comment.');
+          setTimeout(() => setNotification(''), 3000);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to report comment');
+        }
+
+        setNotification('Reported comment successfully');
         setTimeout(() => setNotification(''), 3000);
-        return;
       }
-
-      const response = await fetch(`http://localhost:3000/api/reports`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ contentId: commentId, contentType: 'comment' }),
-      });
-
-      if (response.status === 400) {
-        setNotification('You have already reported this comment.');
-        setTimeout(() => setNotification(''), 3000);
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error('Failed to report comment');
-      }
-
-      setNotification('Reported comment successfully');
-      setTimeout(() => setNotification(''), 3000);
     } catch (err) {
       setNotification(err.message);
       setTimeout(() => setNotification(''), 3000);
@@ -103,35 +154,45 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
   };
 
   const handleEditComment = async (commentId) => {
+    if (!commentId) {
+      setNotification('Invalid comment ID');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        setNotification('You are not logged in');
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+          setNotification('You are not logged in');
+          setTimeout(() => setNotification(''), 3000);
+          return;
+        }
+
+        const response = await fetch(
+          `http://localhost:3000/api/comments/${commentId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ body: editedComment }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to update comment');
+        }
+
+        const updatedComment = await response.json();
+        setNotification('Comment updated successfully');
         setTimeout(() => setNotification(''), 3000);
-        return;
+        setIsEditing(false);
+        setLocalComment((prev) => ({
+          ...prev,
+          body: updatedComment.body,
+        }));
       }
-
-      const response = await fetch(`http://localhost:3000/api/comments/${commentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ body: editedComment }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update comment');
-      }
-
-      const updatedComment = await response.json();
-      setNotification('Comment updated successfully');
-      setTimeout(() => setNotification(''), 3000);
-      setIsEditing(false);
-      setLocalComment((prev) => ({
-        ...prev,
-        body: updatedComment.body,
-      }));
     } catch (err) {
       setNotification(err.message);
       setTimeout(() => setNotification(''), 3000);
@@ -140,14 +201,20 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
 
   return (
     <div
-      className={`bg-gray-100 dark:bg-gray-800 p-2 sm:p-4 rounded-lg relative mb-2 ml-${depth * 2} sm:ml-${depth * 4} md:ml-${depth * 6} lg:ml-${depth * 8}`}
+      className={`bg-gray-100 dark:bg-gray-800 p-2 sm:p-4 rounded-lg relative mb-2 ml-${
+        depth * 2
+      } sm:ml-${depth * 4} md:ml-${depth * 6} lg:ml-${depth * 8}`}
     >
       <div className="flex items-center mb-2">
-      {localComment?.User?.avatar && (
-        <img src={localComment.User.avatar} alt="Avatar" className="w-8 h-8 rounded-full mr-2" />
+        {localComment?.User?.avatar && (
+          <img
+            src={localComment.User.avatar}
+            alt="Avatar"
+            className="w-8 h-8 rounded-full mr-2"
+          />
         )}
         <span className="font-semibold text-gray-800 dark:text-gray-200">
-          {localComment.User?.firstName || 'You'}
+          {localComment?.User?.firstName || 'Anonymous'}
         </span>
       </div>
       <div className="flex items-center justify-between">
@@ -160,7 +227,7 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
               placeholder="Edit your comment"
             />
             <button
-              onClick={() => handleEditComment(localComment.id)}
+              onClick={() => handleEditComment(localComment?.id)}
               className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800"
             >
               Save
@@ -173,27 +240,34 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
             </button>
           </div>
         ) : (
-          <p className="text-gray-800 dark:text-gray-200 flex-grow">{localComment?.body || 'No content available'}</p>
+          <p className="text-gray-800 dark:text-gray-200 flex-grow">
+            {localComment?.body || 'No content available'}
+          </p>
         )}
         <div className="flex items-center space-x-2">
-          {currentUserId === localComment.userId && (
-            <>
-              <button
-                onClick={() => handleDeleteComment(localComment.id, postId)}
-                className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-500"
-              >
-                <FaTrash size={15} />
-              </button>
-              <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                <FaEdit size={15} />
-              </button>
-            </>
-          )}
+          {currentUserId &&
+            localComment?.userId &&
+            currentUserId === localComment.userId && (
+              <>
+                <button
+                  onClick={() =>
+                    localComment?.id &&
+                    handleDeleteComment(localComment.id, postId)
+                  }
+                  className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-500"
+                >
+                  <FaTrash size={15} />
+                </button>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <FaEdit size={15} />
+                </button>
+              </>
+            )}
           <button
-            onClick={() => handleReportComment(localComment.id)}
+            onClick={() => handleReportComment(localComment?.id)}
             className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500"
           >
             <FaFlag size={15} />
@@ -204,7 +278,9 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
         <button
           onClick={() => handleVote('upvote')}
           className={`${
-            localComment.upvotedByUsers?.some((user) => user.id === currentUserId)
+            localComment.upvotedByUsers?.some(
+              (user) => user.id === currentUserId
+            )
               ? 'text-blue-500 dark:text-blue-400'
               : 'text-gray-500 dark:text-gray-400'
           } hover:text-green-600 dark:hover:text-green-500`}
@@ -214,14 +290,18 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
         <button
           onClick={() => handleVote('downvote')}
           className={`${
-            localComment.downvotedByUsers?.some((user) => user.id === currentUserId)
+            localComment.downvotedByUsers?.some(
+              (user) => user.id === currentUserId
+            )
               ? 'text-blue-500 dark:text-blue-400'
               : 'text-gray-500 dark:text-gray-400'
           } hover:text-red-600 dark:hover:text-red-500`}
         >
           <FaThumbsDown size={20} />
         </button>
-        <span className="text-gray-600 dark:text-gray-400">Rating: {localComment.rating}</span>
+        <span className="text-gray-600 dark:text-gray-400">
+          Rating: {localComment?.rating || 0}
+        </span>
         <button
           onClick={() => setShowReplyForm(!showReplyForm)}
           className="text-blue-500 dark:text-blue-400 hover:underline"
@@ -245,7 +325,7 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
           </button>
         </div>
       )}
-      {localComment.Replies && localComment.Replies.length > 0 && (
+      {localComment?.Replies && localComment.Replies.length > 0 && (
         <div className="ml-4 mt-2">
           {localComment.Replies.map((reply) => (
             <Comment
