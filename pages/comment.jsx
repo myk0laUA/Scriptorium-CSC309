@@ -9,7 +9,8 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState(comment.body);
-  const [localComment, setLocalComment] = useState(comment); // Local state for the comment
+  const [localComment, setLocalComment] = useState(comment || { body: '', upvotedByUsers: [], downvotedByUsers: [], Replies: [] });
+
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -142,8 +143,8 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
       className={`bg-gray-100 dark:bg-gray-800 p-2 sm:p-4 rounded-lg relative mb-2 ml-${depth * 2} sm:ml-${depth * 4} md:ml-${depth * 6} lg:ml-${depth * 8}`}
     >
       <div className="flex items-center mb-2">
-        {localComment.User?.avatar && (
-          <img src={localComment.User.avatar} alt="Avatar" className="w-8 h-8 rounded-full mr-2" />
+      {localComment?.User?.avatar && (
+        <img src={localComment.User.avatar} alt="Avatar" className="w-8 h-8 rounded-full mr-2" />
         )}
         <span className="font-semibold text-gray-800 dark:text-gray-200">
           {localComment.User?.firstName || 'You'}
@@ -172,7 +173,7 @@ const Comment = ({ comment, postId, handleAddComment, handleDeleteComment, handl
             </button>
           </div>
         ) : (
-          <p className="text-gray-800 dark:text-gray-200 flex-grow">{localComment.body}</p>
+          <p className="text-gray-800 dark:text-gray-200 flex-grow">{localComment?.body || 'No content available'}</p>
         )}
         <div className="flex items-center space-x-2">
           {currentUserId === localComment.userId && (

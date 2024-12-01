@@ -34,7 +34,10 @@ const SaveTemplateButton = ({ code, language }) => {
   };
 
   return (
-    <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">
+    <button
+      onClick={handleSave}
+      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-400"
+    >
       Save as Template
     </button>
   );
