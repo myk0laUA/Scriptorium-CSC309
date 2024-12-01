@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import LanguageSelector from '../components/LanguageSelector';
-import Navbar from '../components/Navbar';
+import Layout from '../components/Layout';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
+// Logic influenced by ChatGPT
 const EditorPage = () => {
   const [language, setLanguage] = useState('javascript');
   const [code, setCode] = useState('// Write your code here');
@@ -26,7 +27,6 @@ const EditorPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if the user is authenticated
     let token = null;
     let userId = null;
     if (typeof window !== 'undefined') {
@@ -38,7 +38,6 @@ const EditorPage = () => {
       }
     }
 
-    // Retrieve template data from localStorage
     const storedTemplate = localStorage.getItem('selectedTemplate');
     const editingFlag = localStorage.getItem('isEditing');
     const forkingFlag = localStorage.getItem('isForking');
@@ -54,7 +53,6 @@ const EditorPage = () => {
         tags: template.tags,
       });
 
-      // Check if the template belongs to the authenticated user
       if (userId && template.userId === userId) {
         setIsOwner(true);
       } else {
@@ -70,7 +68,6 @@ const EditorPage = () => {
         setIsForking(false);
       }
 
-      // Clear localStorage to prevent stale data
       localStorage.removeItem('selectedTemplate');
       localStorage.removeItem('isEditing');
       localStorage.removeItem('isForking');
@@ -190,9 +187,8 @@ const EditorPage = () => {
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="p-6">
+    <Layout>
+      <div className="p-6 dark:bg-gray-900 dark:text-gray-200 transition duration-300">
         <div className="mb-4">
           <input
             type="text"
@@ -204,7 +200,7 @@ const EditorPage = () => {
                 title: e.target.value,
               }))
             }
-            className="w-full p-2 border rounded mb-2"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 mb-2"
             disabled={!isEditing && !isForking}
           />
           <textarea
@@ -216,7 +212,7 @@ const EditorPage = () => {
                 explanation: e.target.value,
               }))
             }
-            className="w-full p-2 border rounded mb-2"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 mb-2"
             disabled={!isEditing && !isForking}
           />
           <input
@@ -229,7 +225,7 @@ const EditorPage = () => {
                 tags: e.target.value,
               }))
             }
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
             disabled={!isEditing && !isForking}
           />
         </div>
@@ -242,14 +238,14 @@ const EditorPage = () => {
             <button
               onClick={handleExecute}
               disabled={isExecuting}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800"
             >
               {isExecuting ? 'Executing...' : 'Run Code'}
             </button>
             {isAuthenticated && isEditing && (
               <button
                 onClick={handleSaveChanges}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800"
               >
                 Save Changes
               </button>
@@ -257,7 +253,7 @@ const EditorPage = () => {
             {isAuthenticated && isForking && (
               <button
                 onClick={handleForkTemplate}
-                className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                className="bg-purple-500 dark:bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-600 dark:hover:bg-purple-800"
               >
                 Fork Template
               </button>
@@ -267,7 +263,7 @@ const EditorPage = () => {
                 onClick={() => {
                   setIsForking(true);
                 }}
-                className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                className="bg-purple-500 dark:bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-600 dark:hover:bg-purple-800"
               >
                 Fork Template
               </button>
@@ -280,21 +276,21 @@ const EditorPage = () => {
           onChange={(value) => setCode(value)}
         />
         <div className="mt-4">
-          <h3 className="font-semibold">Input:</h3>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-200">Input:</h3>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full h-24 p-2 border rounded"
+            className="w-full h-24 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
           />
         </div>
         <div className="mt-4">
-          <h3 className="font-semibold">Output:</h3>
-          <pre className="w-full h-24 p-2 border rounded bg-gray-100">
+          <h3 className="font-semibold text-gray-800 dark:text-gray-200">Output:</h3>
+          <pre className="w-full h-24 p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             {output}
           </pre>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

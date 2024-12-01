@@ -5,6 +5,7 @@ import PaginationControls from '../../components/PaginationControls';
 import Navbar from '../../components/Navbar';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import Layout from '../../components/Layout';
 
 const MyTemplatesPage = () => {
   const [templates, setTemplates] = useState([]);
@@ -48,8 +49,7 @@ const MyTemplatesPage = () => {
   };
 
   return (
-    <>
-      <Navbar />
+    <Layout>
       <div className="p-6">
         <h1 className="text-3xl font-bold mb-4">My Templates</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -68,7 +68,7 @@ const MyTemplatesPage = () => {
           onPageChange={setPage}
         />
       </div>
-    </>
+      </Layout>
   );
 };
 

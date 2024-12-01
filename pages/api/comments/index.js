@@ -97,6 +97,8 @@ export default async function handler(req, res) {
                     User: {
                         select: { id: true, firstName: true, email: true, avatar: true },
                     },
+                    upvotedByUsers: true, 
+                    downvotedByUsers: true,
                     ...buildRepliesInclude(depth), // Dynamically include replies
                 },
                 orderBy,
