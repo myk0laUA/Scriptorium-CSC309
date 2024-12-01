@@ -201,7 +201,7 @@ const EditorPage = () => {
               }))
             }
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 mb-2"
-            disabled={!isEditing && !isForking}
+            disabled={!isAuthenticated ? true : false}
           />
           <textarea
             placeholder="Explanation"
@@ -213,7 +213,7 @@ const EditorPage = () => {
               }))
             }
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 mb-2"
-            disabled={!isEditing && !isForking}
+            disabled={!isAuthenticated ? true : false}
           />
           <input
             type="text"
@@ -226,7 +226,7 @@ const EditorPage = () => {
               }))
             }
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-            disabled={!isEditing && !isForking}
+            disabled={!isAuthenticated ? true : false}
           />
         </div>
         <div className="flex justify-between mb-4">
@@ -258,14 +258,12 @@ const EditorPage = () => {
                 Fork Template
               </button>
             )}
-            {isAuthenticated && !isEditing && !isForking && !isOwner && (
+            {isAuthenticated && !isEditing && !isForking && (
               <button
-                onClick={() => {
-                  setIsForking(true);
-                }}
-                className="bg-purple-500 dark:bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-600 dark:hover:bg-purple-800"
+                onClick={handleSaveAsTemplate}
+                className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800"
               >
-                Fork Template
+                Save as Template
               </button>
             )}
           </div>

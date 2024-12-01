@@ -41,58 +41,59 @@ const MainPage = () => {
               </>
             )}
             <div className="flex flex-col items-center space-y-4 mb-6 mt-22">
-              {isLoggedIn ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">
-                  <a
+            {isLoggedIn ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">
+                <Link
+                  href="/editor"
+                  className="bg-purple-500 dark:bg-purple-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-purple-600 dark:hover:bg-purple-800 transition duration-300 text-center"
+                >
+                  Launch Editor
+                </Link>
+                <Link
+                  href="/templates"
+                  className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300 text-center"
+                >
+                  Explore Templates
+                </Link>
+                <Link
+                  href="/blog-posts"
+                  className="bg-green-500 dark:bg-green-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-green-600 dark:hover:bg-green-800 transition duration-300 text-center"
+                >
+                  Explore Blogs
+                </Link>
+                <Link
+                  href="/my-templates"
+                  className="bg-orange-500 dark:bg-orange-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-orange-600 dark:hover:bg-orange-800 transition duration-300 text-center"
+                >
+                  My Templates
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="flex space-x-4">
+                  <Link
+                    href="/login"
+                    className="bg-blue-500 dark:bg-blue-700 text-white px-14 py-3 rounded-lg text-xl hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="bg-green-500 dark:bg-green-700 text-white px-12 py-3 rounded-lg text-xl hover:bg-green-600 dark:hover:bg-green-800 transition duration-300"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+                <div className="mt-16">
+                  <Link
                     href="/editor"
-                    className="bg-purple-500 dark:bg-purple-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-purple-600 dark:hover:bg-purple-800 transition duration-300 text-center"
+                    className="bg-purple-500 dark:bg-purple-700 text-white px-28 py-4 rounded-lg text-xl hover:bg-purple-600 dark:hover:bg-purple-800 transition duration-300"
                   >
                     Launch Editor
-                  </a>
-                  <a
-                    href="/templates"
-                    className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300 text-center"
-                  >
-                    Explore Templates
-                  </a>
-                  <a
-                    href="/blog-posts"
-                    className="bg-green-500 dark:bg-green-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-green-600 dark:hover:bg-green-800 transition duration-300 text-center"
-                  >
-                    Explore Blogs
-                  </a>
-                  <a
-                    href="/my-templates"
-                    className="bg-orange-500 dark:bg-orange-700 text-white px-4 py-3 rounded-lg text-2xl hover:bg-orange-600 dark:hover:bg-orange-800 transition duration-300 text-center"
-                  >
-                    My Templates
-                  </a>
+                  </Link>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="flex space-x-4">
-                    <Link href="/login">
-                      <span className="bg-blue-500 dark:bg-blue-700 text-white px-14 py-3 rounded-lg text-xl hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300">
-                      Log In
-                      </span>
-                    </Link>
-                  
-                    <Link href="/signup"> 
-                      <span className="bg-green-500 dark:bg-green-700 text-white px-12 py-3 rounded-lg text-xl hover:bg-green-600 dark:hover:bg-green-800 transition duration-300">
-                      Sign Up
-                      </span>
-                    </Link>
-                  </div>
-
-                  <div className="mt-16">
-                    <Link href="/editor">
-                      <span className="bg-purple-500 dark:bg-purple-700 text-white px-28 py-4 rounded-lg text-xl hover:bg-purple-600 dark:hover:bg-purple-800 transition duration-300">                  
-                      Launch Editor
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-              )}
+              </div>
+            )}
             </div>
           </div>
           {!isLoggedIn && (
