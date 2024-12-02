@@ -171,11 +171,9 @@ const Comment = ({
       </div>
       <div className="flex items-center space-x-4 mt-2">
         <button
-          onClick={() => handleVote('upvote')}
+          onClick={() => handleVoteComment(comment.id, postId, 'upvote')}
           className={`${
-            localComment.upvotedByUsers?.some(
-              (user) => user.id === currentUserId
-            )
+            comment.upvotedByUsers?.some((user) => user.id === currentUserId)
               ? 'text-blue-500 dark:text-blue-400'
               : 'text-gray-500 dark:text-gray-400'
           } hover:text-green-600 dark:hover:text-green-500`}
@@ -183,17 +181,16 @@ const Comment = ({
           <FaThumbsUp size={20} />
         </button>
         <button
-          onClick={() => handleVote('downvote')}
+          onClick={() => handleVoteComment(comment.id, postId, 'downvote')}
           className={`${
-            localComment.downvotedByUsers?.some(
-              (user) => user.id === currentUserId
-            )
+            comment.downvotedByUsers?.some((user) => user.id === currentUserId)
               ? 'text-blue-500 dark:text-blue-400'
               : 'text-gray-500 dark:text-gray-400'
           } hover:text-red-600 dark:hover:text-red-500`}
         >
           <FaThumbsDown size={20} />
         </button>
+
         <span className="text-gray-600 dark:text-gray-400">
           Rating: {localComment?.rating || 0}
         </span>

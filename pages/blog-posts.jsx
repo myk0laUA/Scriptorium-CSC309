@@ -223,11 +223,62 @@ const BlogPosts = () => {
         return;
       }
   
+      // Optimistically update the comment
+      setComments((prevComments) => {
+        const updateCommentInTree = (comments) => {
+          return comments.map((comment) => {
+            if (comment.id === commentId) {
+              const isUpvoted = comment.upvotedByUsers.some((user) => user.id === userId);
+              const isDownvoted = comment.downvotedByUsers.some((user) => user.id === userId);
+  
+              let newUpvotedByUsers = [...comment.upvotedByUsers];
+              let newDownvotedByUsers = [...comment.downvotedByUsers];
+  
+              if (vote === 'upvote') {
+                if (isUpvoted) {
+                  newUpvotedByUsers = newUpvotedByUsers.filter((user) => user.id !== userId);
+                } else {
+                  newUpvotedByUsers.push({ id: userId });
+                  newDownvotedByUsers = newDownvotedByUsers.filter((user) => user.id !== userId);
+                }
+              } else if (vote === 'downvote') {
+                if (isDownvoted) {
+                  newDownvotedByUsers = newDownvotedByUsers.filter((user) => user.id !== userId);
+                } else {
+                  newDownvotedByUsers.push({ id: userId });
+                  newUpvotedByUsers = newUpvotedByUsers.filter((user) => user.id !== userId);
+                }
+              }
+  
+              return {
+                ...comment,
+                upvotedByUsers: newUpvotedByUsers,
+                downvotedByUsers: newDownvotedByUsers,
+                rating: newUpvotedByUsers.length - newDownvotedByUsers.length,
+                Replies: comment.Replies, // Preserve the Replies array
+              };
+            } else if (comment.Replies) {
+              return {
+                ...comment,
+                Replies: updateCommentInTree(comment.Replies),
+              };
+            }
+            return comment;
+          });
+        };
+  
+        return {
+          ...prevComments,
+          [postId]: updateCommentInTree(prevComments[postId]),
+        };
+      });
+  
+      // Send the vote to the backend
       const response = await fetch(`http://localhost:3000/api/comments/${commentId}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ vote }),
       });
@@ -237,32 +288,37 @@ const BlogPosts = () => {
       }
   
       const updatedComment = await response.json();
+  
       setComments((prevComments) => {
-        const updateCommentInTree = (comments) => {
-          return comments.map((c) => {
-            if (c.id === commentId) {
+        const syncCommentInTree = (comments) =>
+          comments.map((comment) => {
+            if (comment.id === updatedComment.id) {
               return {
-                ...c,
-                rating: updatedComment.rating, // Update only the rating
+                ...comment,
+                upvotedByUsers: updatedComment.upvotedByUsers,
+                downvotedByUsers: updatedComment.downvotedByUsers,
+                rating: updatedComment.rating,
+                Replies: comment.Replies,
               };
-            } else if (c.Replies) {
+            } else if (comment.Replies) {
               return {
-                ...c,
-                Replies: updateCommentInTree(c.Replies),
+                ...comment,
+                Replies: syncCommentInTree(comment.Replies),
               };
             }
-            return c;
+            return comment;
           });
-        };
+  
         return {
           ...prevComments,
-          [postId]: updateCommentInTree(prevComments[postId]),
+          [postId]: syncCommentInTree(prevComments[postId]),
         };
       });
     } catch (err) {
       setError(err.message);
     }
   };
+   
 
   const handleReportContent = async (contentId, contentType) => {
     try {
