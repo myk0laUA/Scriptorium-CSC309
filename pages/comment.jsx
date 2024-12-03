@@ -94,6 +94,42 @@ const Comment = ({
     }
   };
 
+  const handleReportComment = async (commentId) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setNotification('You are not logged in');
+        setTimeout(() => setNotification(''), 3000);
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/api/reports`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ contentId: commentId, contentType: 'comment' }),
+      });
+
+      if (response.status === 400) {
+        setNotification('You have already reported this comment.');
+        setTimeout(() => setNotification(''), 3000);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to report comment');
+      }
+
+      setNotification('Reported comment successfully');
+      setTimeout(() => setNotification(''), 3000);
+    } catch (err) {
+      setNotification(err.message);
+      setTimeout(() => setNotification(''), 3000);
+    }
+  };
+
   return (
     <div
       className={`bg-gray-100 dark:bg-gray-800 p-2 sm:p-4 rounded-lg relative mb-2 ml-${
