@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const CreatePost = () => {
-  const [formData, setFormData] = useState({
+//used ChatGPT for conversion to tsx
+interface Template {
+  id: number;
+  title: string;
+}
+
+interface FormData {
+  title: string;
+  description: string;
+  tags: string;
+  linkToTemplates: number[];
+}
+
+const CreatePost: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
     tags: '',
     linkToTemplates: [],
   });
 
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [templates, setTemplates] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<Template[]>([]);
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -22,7 +35,7 @@ const CreatePost = () => {
         }
         const data = await response.json();
         setTemplates(data.templates);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     };
@@ -30,7 +43,7 @@ const CreatePost = () => {
     fetchTemplates();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -38,9 +51,9 @@ const CreatePost = () => {
     }));
   };
 
-  const handleTemplateChange = (e) => {
+  const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { options } = e.target;
-    const selectedTemplates = [];
+    const selectedTemplates: number[] = [];
     for (let i = 0; i < options.length; i++) {
       if (options[i].selected) {
         selectedTemplates.push(Number(options[i].value));
@@ -52,7 +65,7 @@ const CreatePost = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setError(null);
@@ -137,7 +150,7 @@ const CreatePost = () => {
           <select
             name="linkToTemplates"
             multiple
-            value={formData.linkToTemplates}
+            value={formData.linkToTemplates.map(String)}
             onChange={handleTemplateChange}
             className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded"
           >

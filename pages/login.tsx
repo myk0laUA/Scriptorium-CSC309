@@ -3,16 +3,25 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import '../app/globals.css';
 
-const LogIn = () => {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+// used ChatGPT for conversion to tsx
+interface FormData {
+  username: string;
+  password: string;
+}
 
-  const handleChange = (e) => {
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  error?: string;
+}
+
+const LogIn: React.FC = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState<FormData>({ username: '', password: '' });
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -20,7 +29,7 @@ const LogIn = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);

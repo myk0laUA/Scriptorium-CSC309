@@ -2,7 +2,22 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import './avatar-selection.css';
 
-const availableAvatars = [
+
+
+// used ChatGPT for conversion to tsx
+interface FormData {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  avatar: string;
+  phoneNum: string;
+  role: 'USER' | 'ADMIN';
+  adminKey: string;
+}
+
+const availableAvatars: string[] = [
   'http://localhost:3000/avatars/avatar1.png',
   'http://localhost:3000/avatars/avatar2.png',
   'http://localhost:3000/avatars/avatar3.png',
@@ -11,8 +26,8 @@ const availableAvatars = [
 ];
 
 // Logic influenced by ChatGPT
-const SignUp = () => {
-  const [formData, setFormData] = useState({
+const SignUp: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     username: '',
     firstName: '',
     lastName: '',
@@ -25,10 +40,10 @@ const SignUp = () => {
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     // Allow only numeric input for phoneNum
@@ -40,14 +55,14 @@ const SignUp = () => {
     }));
   };
 
-  const handleAvatarSelect = (avatar) => {
+  const handleAvatarSelect = (avatar: string) => {
     setFormData((prevData) => ({
       ...prevData,
       avatar,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);

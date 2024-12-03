@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    
     "target": "ES2017",
     "lib": [
       "dom",
@@ -8,7 +9,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
@@ -29,7 +30,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/api/blogPost/[id].js", "pages/api/protected/authorization.js", "pages/my-templates/edit/[id].jsx", "pages/comment.jsx", "pages/blog-posts.jsx", "pages/templates/index.jsx", "pages/templates/[id].jsx", "pages/my-templates/index.jsx", "components/CodeEditor.jsx", "components/LanguageSelector.jsx", "components/SaveTemplateButton.jsx", "components/TemplateCard.jsx", "components/Layout.jsx", "pages/editor.jsx", "pages/create-post.tsx", "pages/edit-post/[id].jsx"  ],
   "exclude": [
     "node_modules"
   ]

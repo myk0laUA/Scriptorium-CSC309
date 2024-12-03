@@ -1,6 +1,13 @@
 import React from 'react';
 
-const PaginationControls = ({ currentPage, totalPages, onPageChange }) => (
+// used ChatGPT for conversion to tsx
+interface PaginationControlsProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const PaginationControls: React.FC<PaginationControlsProps> = ({ currentPage, totalPages, onPageChange }) => (
   <div className="flex justify-center mt-4 space-x-2">
     <button
       onClick={() => onPageChange(currentPage - 1)}

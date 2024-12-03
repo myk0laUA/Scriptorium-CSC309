@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import './avatar-selection.css';
 
+// used ChatGPT for conversion to tsx
+
 const availableAvatars = [
   'http://localhost:3000/avatars/avatar1.png',
   'http://localhost:3000/avatars/avatar2.png',
@@ -18,8 +20,8 @@ const EditProfile = () => {
     phoneNum: '',
   });
 
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,7 +59,7 @@ const EditProfile = () => {
     fetchUserData();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -65,14 +67,14 @@ const EditProfile = () => {
     }));
   };
 
-  const handleAvatarSelect = (avatar) => {
+  const handleAvatarSelect = (avatar: string) => {
     setFormData((prevData) => ({
       ...prevData,
       avatar,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setError(null);

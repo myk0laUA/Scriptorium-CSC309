@@ -1,0 +1,557 @@
+commit 586d0bb3e0d373329daecfcd49a8f93094ca0afe
+Merge: 7eda2c2 e547dcd
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sun Dec 1 18:48:37 2024 -0500
+
+    populated DB with templates
+
+commit 7eda2c28cb137e621cb2254c03ed12d40d836343
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sun Dec 1 18:01:57 2024 -0500
+
+    fixing visual bugs
+
+commit e547dcdcaa005de7611e78416f9f77791b1a1851
+Author: Parth <parthvats02@yahoo.com>
+Date:   Sun Dec 1 16:54:10 2024 -0500
+
+    Add comments to db
+
+commit bb428cb0451bdb49fbee6c68f860faf86d05753b
+Author: Parth <parthvats02@yahoo.com>
+Date:   Sun Dec 1 16:37:48 2024 -0500
+
+    Address comments issue
+
+commit 770d21d19cc7dcb1fdf716645be21de28fcd8fbd
+Author: Parth <parthvats02@yahoo.com>
+Date:   Sun Dec 1 16:36:05 2024 -0500
+
+    Address comments issue
+
+commit cc9d63a0ee6f13e74a4e98117f6b9955a97c1038
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sun Dec 1 16:29:44 2024 -0500
+
+    Fixed Launch Editor bug
+
+commit 22265b27eeaa8e0df59e3a630c8b65c8a92b7ce4
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sun Dec 1 16:05:13 2024 -0500
+
+    Fixed minor errors + populated the database
+
+commit 63f066650e49c6c1930541c7578071225dc33042
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sat Nov 30 22:35:43 2024 -0500
+
+    fixes
+
+commit 068ab3ab2806dba72cb617ef3137e13e7e17d824
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sat Nov 30 22:25:29 2024 -0500
+
+    fixing static
+
+commit f7e56e4a8306f6ee45417e4636f8d6f0cafddd92
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sat Nov 30 21:48:32 2024 -0500
+
+    added script
+
+commit b49950438ec02fbb39e8e4f22c61d858cc18a1b7
+Author: Parth <parthvats02@yahoo.com>
+Date:   Sat Nov 30 21:31:39 2024 -0500
+
+    hotfixes
+
+commit e6e8078dcd797171594bc4843bdf9ef5d9dcff2b
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Sat Nov 30 21:19:55 2024 -0500
+
+    All UI/UX changes mega commit (#18)
+
+commit b51799fdf64994332d33e0f3055ec9ff0fb4e7cf
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Sat Nov 30 19:48:45 2024 -0500
+
+    Mykola/docker code processing (#17)
+    
+    * added code processing through docker
+    
+    * fixed error output and trimming
+
+commit 4a7061030a419ea4a948b6185c2f6470a8d4688c
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sat Nov 30 18:47:12 2024 -0500
+
+    Added filtering by Linked Templates and fixed filtering by Template Mentioned + UI enhancements.
+
+commit ec0dc337405931594987094a113e1a413098e873
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sat Nov 30 16:14:01 2024 -0500
+
+    fixed fetching templates
+
+commit d3a8bf8600d6f926fe19cfd675c39d6b3d6d7990
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sat Nov 30 16:00:59 2024 -0500
+
+    Added frontend functionality for linking templates to blog posts.
+
+commit 37166af1ec69af02a3a9d7d611794cd5afbccb43
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Fri Nov 29 14:58:48 2024 -0500
+
+    added button to view templates in the BlogPosts
+
+commit acbf2ad79ed07ebcf320b679266ecc6c6d0b42e0
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Thu Nov 28 18:19:17 2024 -0500
+
+    UI improvements for blog posts
+
+commit c2720c49bbef14ca9e6e934c935efd0ebe44860f
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Wed Nov 27 19:49:50 2024 -0500
+
+    Enhanced UI functionality for liking/disliking, deleting, and editing blog posts.
+
+commit 21e76731b174dfcdc0994a516f2248413d19e481
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Wed Nov 27 16:23:47 2024 -0500
+
+    initial functionality implemented, a lot of bug fixes needed, as well as breaking down code into components and implementing code execution using docker (#16)
+
+commit 23425a53620dbba129e9a9086299641078c7b9cc
+Merge: 120ff68 d0c9700
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Mon Nov 25 02:44:25 2024 -0500
+
+    Fully implement frontend aspect of comments, reporting, and admin page while keeping UX in mind
+
+commit d0c97009e20b6d5ba8e431304047dba06eac62cc
+Merge: bda3ebf 120ff68
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Mon Nov 25 02:43:34 2024 -0500
+
+    Merge branch 'main' into parth/frontend-comments-and-reporting
+
+commit bda3ebfccbb101a9a777a76ba6d4e4db1d46ad80
+Author: Parth <parth@Swareenas-MacBook-Air.local>
+Date:   Mon Nov 25 01:57:04 2024 -0500
+
+    Fully implement FE of reporting and Admin page + made UX improvements like showing delete/edit for only current users comments, etc.
+
+commit 8e69dad9b312e4ff4947f0e5f2df12b1ea5f8d93
+Author: Parth <parth@Swareenas-MacBook-Air.local>
+Date:   Sun Nov 24 19:19:57 2024 -0500
+
+    Fully implement frontend aspect of comments
+
+commit 120ff6847fbb9f40f9ba98dfc749436e85ac55dc
+Merge: 0f2bddc bb073df
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Sat Nov 23 20:44:06 2024 -0500
+
+    Merge pull request #14 from myk0laUA/daniel
+    
+    Finished edit profile use case and implemented visual avatar selectio…
+
+commit bb073dfba1852e1e26425c109f21fb5cd12fd03d
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sat Nov 23 20:43:34 2024 -0500
+
+    Finished edit profile use case and implemented visual avatar selection, with the associated avatar being displayed when a user is logged in and next to each blog post.
+
+commit 0f2bddc1aad3d944d81972e7eba2fe11afc30d2a
+Merge: bf2eabd 5ba5c09
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Fri Nov 22 19:51:52 2024 -0500
+
+    Merge pull request #13 from myk0laUA/daniel
+    
+    Added pagination to Blog Posts and began developing the Edit Profile …
+
+commit 5ba5c09ead1030c36dea7ee908a8b89c60d25652
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Fri Nov 22 19:51:10 2024 -0500
+
+    Added pagination to Blog Posts and began developing the Edit Profile use case.
+
+commit bf2eabde3d4b6c6757c4717b92826f88ed50f3ee
+Merge: 63dba36 4c2bc76
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Thu Nov 21 20:45:56 2024 -0500
+
+    Make recommended backend changes: Infinite replies and comment voting logic
+
+commit 63dba3611c5729f6bafd66b3dc80513d89149271
+Merge: 8d482da a44a088
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Thu Nov 21 18:43:04 2024 -0500
+
+    Merge pull request #12 from myk0laUA/daniel
+    
+    Finished all frontend core functionality for Blog Posts.
+
+commit a44a0880ca11b03c8e3a8f9dd7891239bdd5f3c6
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Thu Nov 21 18:41:32 2024 -0500
+
+    Finished all frontend core functionality for Blog Posts.
+
+commit 8d482dad3e13fc35b95e3a15c2272f8dc3734265
+Merge: fd67303 9529a13
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Thu Nov 21 18:39:01 2024 -0500
+
+    Merge pull request #10 from myk0laUA/daniel
+    
+    Added frontend functionality for Log in, Log out, and CRUD for blog p…
+
+commit 4c2bc76182e826a52cb0473a20e0d37c922ca892
+Author: Parth <parth@macbookair.home>
+Date:   Thu Nov 21 01:36:19 2024 -0500
+
+    Make recommended backend changes: infinite replies and comment voting
+
+commit 9529a1309371ecdd34eed0863122d9f1c4915d9e
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Wed Nov 20 23:26:44 2024 -0500
+
+    Added frontend functionality for Log in, Log out, and CRUD for blog posts, with some minor changes in the backend.t
+
+commit fd67303a6d52e32a63ee9dbbb17f88887d93fdec
+Merge: 0df04aa d26c515
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Wed Nov 20 23:22:56 2024 -0500
+
+    Merge pull request #9 from myk0laUA/daniel
+    
+    Added main page and Signup functionality from the frontend.
+
+commit d26c515be664f40f9a868593e30c243d3d97d206
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sun Nov 17 19:38:01 2024 -0500
+
+    Added main page and Signup functionality from the frontend.
+
+commit 0df04aa0b33806a41cf855750df4e9dc2a363669
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sun Nov 3 21:55:56 2024 -0500
+
+    Added collection and environment
+
+commit 496dd3e96a90143395bba02f34f1e4a8dabe89c0
+Author: Parth Vats <sidharthvats@Swareenas-MacBook-Air.local>
+Date:   Mon Nov 4 02:04:56 2024 +0000
+
+    Add documentation
+
+commit f891c7ec65e54c1d917ec4cdb93193d62f27bbc1
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sun Nov 3 18:38:03 2024 -0500
+
+    added error trimming to the code execution use case
+
+commit ea208be14d039f0ee5f2440b277cf4023804b039
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sun Nov 3 16:48:29 2024 -0500
+
+    modified code exucution to work
+
+commit e1c0ba853deabe2e676618de5d78929cf61454f0
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sun Nov 3 15:42:41 2024 -0500
+
+    changed python command from 'python3' to 'python' for more consistent results
+
+commit bf560481976649bb88670166fca136a45471003e
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Sun Nov 3 15:35:00 2024 -0500
+
+    fixed minor issue with forking
+
+commit e341145d1e12f43e14f9a6f6d0bc89c544635edc
+Merge: ec8bdfb 8a4091d
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sat Nov 2 15:38:10 2024 -0400
+
+    Resolved merge conflict in prisma/dev.db
+
+commit ec8bdfbca2c981091ea8040013c14635b2ec1086
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sat Nov 2 15:19:40 2024 -0400
+
+    Reset database and only added entries generated by postman.json file
+
+commit 8a4091d70eb16008f0ea8ca54badc0973bb32d6b
+Author: Parth Vats <sidharthvats@Swareenas-MacBook-Air.local>
+Date:   Sat Nov 2 13:13:17 2024 +0000
+
+    Add startup and run scripts
+
+commit 84b28adbc279cb2ec99038c6a0dd327577866d76
+Author: Parth Vats <sidharthvats@Swareenas-MacBook-Air.local>
+Date:   Sat Nov 2 02:02:08 2024 +0000
+
+    Remove temp auth from fork and add auth
+
+commit 6fd05525f09af37d9c05a8c8522eac4039750e00
+Author: Parth Vats <sidharthvats@Swareenas-MacBook-Air.local>
+Date:   Sat Nov 2 01:49:18 2024 +0000
+
+    Add authentication to comment + report, minor fixes/additions to directory structure and execution endpoint
+
+commit 7ef7e76893d2839e5c9f358fa21874d94386f6fd
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Fri Nov 1 03:33:46 2024 -0400
+
+    Enabled users to change password as part of Edit-Profile use case.
+
+commit 2d569074f4247bc92ee15f9ccb24b6ffb14519cd
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Fri Nov 1 02:57:52 2024 -0400
+
+    Inserted 3 avatars which user can choose from when signing up or editing profile, and made corresponding changes to Signup and Edit-Profile use cases.
+
+commit 294e2f79bb66467ddd480e194f068d2a5d1d904b
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Fri Nov 1 02:17:00 2024 -0400
+
+    Implemented and fully tested linking Templates to Blog Posts and filtering Blog Posts by Templates mentioned. Added pagination to all lists of Blog Posts. Enhanced upvote/downvote functionality and blocked users from editing Blog Posts they are not the author of.
+
+commit e0b86c52a3819222691bf195d6a32aaa2058d7d2
+Merge: 8468325 44383e8
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Thu Oct 31 21:36:49 2024 -0400
+
+    Merge pull request #8 from myk0laUA/daniel-blogpost
+    
+    Thoroughly tested and developed all blog post us er stories except for Template Search.
+
+commit 8468325e66048d9f56e26d96acec98dfba4f5570
+Merge: f8c6b93 bb8acce
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Thu Oct 31 21:36:33 2024 -0400
+
+    Merge pull request #7 from myk0laUA/daniel-user
+    
+    Added Refresh functionality for tokens and also updated Signup use ca…
+
+commit bb8accebe9e46472e18f2d9931b13b5dcbf97c35
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Thu Oct 31 10:40:23 2024 -0400
+
+    Changed passwordHash to password in User model for better readability and made Role field optional. Updated code in Signup and Login to reflect these changes.
+
+commit 44383e8b63d0e686dd9bdf6bccd97530849b74a8
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Wed Oct 30 20:34:39 2024 -0400
+
+    Thoroughly tested and developed all blog post user stories except for Template Search.
+
+commit f23008a6fdc2072cd6f7443a41f50de6b9c359bf
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Wed Oct 30 20:28:28 2024 -0400
+
+    Added Refresh functionality for tokens and also updated Signup use case to ensure user role is one of USER and ADMIN.
+
+commit f8c6b93ed1f4f59b2bc99739149e4254b685cb44
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Wed Oct 30 18:42:53 2024 -0400
+
+    Implemented and tested code processing use cases (#6)
+
+commit 1f7c6c7c07ed1007622903cfa34ecfdcd3ae097b
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Wed Oct 30 16:19:05 2024 -0400
+
+    added authorization to template handlers and tested it
+
+commit 3789ebf7035bf5b99fca6f7fa9d33c9c07aabf27
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Wed Oct 30 15:35:39 2024 -0400
+
+    fixed search and added pagination
+
+commit 660717596ca2befa3813bded3ad571605d819b06
+Merge: 02ac998 4d45b95
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Wed Oct 30 05:50:55 2024 -0400
+
+    Merge pull request #3 from myk0laUA/daniel-authentication
+    
+    Added username and role attributes to the User model. Developed the u…
+
+commit 4d45b95d9d9d32324feb81379d5aacaa6ca9d81f
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Wed Oct 30 05:49:52 2024 -0400
+
+    Update index.js
+    
+    Resolved errors
+
+commit ae1a404c7addac2cf52da7a80280c5de2cd80a98
+Author: Daniel Kaloshi <127801973+DanielKaloshi@users.noreply.github.com>
+Date:   Wed Oct 30 05:48:35 2024 -0400
+
+    Update [id].js
+    
+    Resolved errors
+
+commit 02ac998327d69bb906c9ccf869e3ce98fbb6f31d
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Tue Oct 29 22:58:52 2024 -0400
+
+    adding template handlers
+
+commit f4a714e504604ecd6af1005f6ee382aac3f4c5d9
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Tue Oct 29 22:53:35 2024 -0400
+
+    Revert "tested handlers for Template Use-Cases (4 to 8)" (#5)
+    
+    squashing and merging use cases 4 to 8
+
+commit 66e3cdcbf8d21e0c50a9bf02b7a57098f83b7e97
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Tue Oct 29 17:34:54 2024 -0400
+
+    Revert "tested handlers"
+    
+    This reverts commit 41010614d192618148cee7a8c3ef4f29f407b502.
+
+commit 7a081def4d58ae5092aaa632b50fbf88d6759531
+Merge: 9896ae9 4101061
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Mon Oct 28 17:54:02 2024 -0400
+
+    Merge pull request #4 from myk0laUA/mykola/user-stories
+    
+    tested handlers for Template Use-Cases (4 to 8)
+
+commit 92763e5df936be6f41f5c51d76b7094cb50b072a
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Sat Oct 26 20:18:46 2024 -0400
+
+    Fully tested Signup, Login, Edit-Profile use cases and token authentication, making some slight error fixes in the process.
+
+commit c758c76551b5428e95ade62d28960ba93820c4a3
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Fri Oct 25 20:29:15 2024 -0400
+
+    Added username and role attributes to the User model. Developed the user signup, login, and edit profile use cases as well as authentication using JWT. Made some changes to code for blogPost use cases to adapt to attribute type changes in BlogPost model.
+
+commit 41010614d192618148cee7a8c3ef4f29f407b502
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Thu Oct 24 17:45:49 2024 -0400
+
+    tested handlers
+
+commit 9896ae90bf960aa2492e0ea9c539fa190fe500c8
+Merge: bd544f7 581d65a
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Thu Oct 24 11:45:37 2024 -0400
+
+    Fully implement and thoroughly test Comment and Report User Stories (APIs)
+    
+    Comment and Report User Stories
+
+commit 581d65ad785c077955ea7d9accaa0766a741708e
+Author: Sidharth Vats <sidharthvats@macbookair.home>
+Date:   Thu Oct 24 11:44:17 2024 -0400
+
+    add comment
+
+commit 80cbce817aa3df052812ab81357cccdbcb63139a
+Author: Sidharth Vats <sidharthvats@macbookair.home>
+Date:   Thu Oct 24 11:42:01 2024 -0400
+
+    Fully implement and test comment and report user stories
+
+commit b5b74e61601560f6248a55aef42fb2a28e256d41
+Merge: c872650 bd544f7
+Author: Sidharth Vats <sidharthvats@macbookair.home>
+Date:   Thu Oct 24 08:02:25 2024 -0400
+
+    Merge with master
+
+commit bd544f72d42aa1bf3847e5e622cc19cf9ecf42dc
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Tue Oct 22 17:23:17 2024 -0400
+
+    Final version of the schema
+
+commit 6c2654c833aaeb68dfee55466183683081bd7a49
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Tue Oct 22 16:49:51 2024 -0400
+
+    Add Comment and Report models + minor fixes
+
+commit 3c39b12ada0caabf70c197b5c4e09aaa63224675
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Tue Oct 22 16:22:28 2024 -0400
+
+    Update schema.prisma
+    
+    added template Model
+
+commit c872650175f7ac3c3cfe6361fe75824f9283576e
+Author: Parth Vats <parthvats02@yahoo.com>
+Date:   Tue Oct 22 01:00:30 2024 -0400
+
+    initial push
+
+commit 3cea1b867244ba88bce908ea69141a2d99ea7092
+Merge: 80546a4 65778eb
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Sun Oct 20 15:49:25 2024 -0400
+
+    Merge pull request #1 from myk0laUA/parth/initial-prisma-setup
+    
+    Initial Prisma setup
+
+commit 65778eb8fb7648993dbdb8389d9de4e24552d8fe
+Author: Parth Vats <parthvats02@yahoo.com>
+Date:   Thu Oct 17 18:42:06 2024 -0400
+
+    Switch to sqlite
+
+commit 6ccf42eda2903d580385310a0bec040816832951
+Merge: c2c41ef 80546a4
+Author: Parth Vats <81998163+parthvats02@users.noreply.github.com>
+Date:   Wed Oct 16 03:25:35 2024 -0400
+
+    Merge branch 'main' into parth/initial-prisma-setup
+
+commit 80546a458f13fc48a14af5b65ae3f47057d15494
+Author: DanielKaloshi <daniel.kaloshi@mail.utoronto.ca>
+Date:   Tue Oct 15 15:16:24 2024 -0400
+
+    Added User and BlogPost models to prisma file and also developed the api handlers for the Blog Post CRUD operations
+
+commit c2c41ef17300878b56e56e587d3c1118ea62a521
+Author: Parth Vats <parthvats02@yahoo.com>
+Date:   Mon Oct 14 01:41:21 2024 -0400
+
+    Initial prisma setup
+
+commit ff51508e8450c6c3dfdefe2501bb88492ce3730b
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Wed Oct 9 13:59:22 2024 -0400
+
+    added the models discussed on the meeting
+
+commit 3897b4fcace43b0f95967d5327c2ae9cc20809ba
+Author: Mykola <mykola.zhuk@mail.utoronto.ca>
+Date:   Wed Oct 9 13:56:36 2024 -0400
+
+    intial commit
+
+commit f1b110945130ecbdd5143067c329b9b81c0b4d16
+Author: Mykola <113080769+myk0laUA@users.noreply.github.com>
+Date:   Wed Oct 9 13:26:18 2024 -0400
+
+    Initial commit

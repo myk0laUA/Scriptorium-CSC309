@@ -2,11 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 
+// used ChatGPT for conversion to tsx
+interface Report {
+  id: number;
+  body?: string;
+  title?: string;
+  numReports: number;
+  hidden: boolean;
+}
+
 // Logic influenced by ChatGPT
 const AdminReports = () => {
-  const [reports, setReports] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [contentType, setContentType] = useState('post');
   const [sortByReports, setSortByReports] = useState(true);
   const [page, setPage] = useState(1);
@@ -33,7 +42,7 @@ const AdminReports = () => {
       const data = await response.json();
       setReports(data.content);
       setTotalPages(data.totalPages);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -56,7 +65,7 @@ const AdminReports = () => {
     }
   };
 
-  const toggleVisibility = async (contentId, currentVisibility) => {
+  const toggleVisibility = async (contentId: number, currentVisibility: boolean) => {
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) {
@@ -78,7 +87,7 @@ const AdminReports = () => {
       }
 
       fetchReports();
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };
