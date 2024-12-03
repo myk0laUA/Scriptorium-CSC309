@@ -4,6 +4,7 @@ import axios from 'axios';
 import CodeEditor from '../../components/CodeEditor';
 import { toast } from 'react-toastify';
 import Navbar from '../../components/Navbar';
+import '../app/globals.css';
 
 const TemplateDetailPage = () => {
   const router = useRouter();

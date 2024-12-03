@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import '../app/globals.css';
 
 //used ChatGPT for conversion to tsx
 interface Template {

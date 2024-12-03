@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import '../app/globals.css';
 
 // Logic influenced by ChatGPT
 const EditorPage = () => {

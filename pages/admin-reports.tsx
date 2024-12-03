@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
+import '../app/globals.css';
 
 // used ChatGPT for conversion to tsx
 interface Report {

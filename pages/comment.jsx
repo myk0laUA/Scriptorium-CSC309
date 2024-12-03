@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash, FaThumbsUp, FaThumbsDown, FaFlag, FaEdit } from 'react-icons/fa';
+import '../app/globals.css';
 
 const Comment = ({
   comment,

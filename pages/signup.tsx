@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import './avatar-selection.css';
+import '../app/globals.css';
 
 
 
