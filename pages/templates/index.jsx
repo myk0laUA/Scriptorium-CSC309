@@ -4,7 +4,7 @@ import TemplateCard from '../../components/TemplateCard';
 import Layout from '../../components/Layout';
 import PaginationControls from '../../components/PaginationControls';
 import { toast } from 'react-toastify';
-import '../app/globals.css';
+import '../../app/globals.css';
 
 const TemplatesPage = () => {
   const [templates, setTemplates] = useState([]);
