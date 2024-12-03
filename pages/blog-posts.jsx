@@ -572,7 +572,7 @@ const BlogPosts = () => {
                 multiple
                 value={filterLinkToTemplates}
                 onChange={handleLinkToTemplatesChange}
-                className="w-full p-2 mt-2 border border-gray-300 rounded"
+                className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               >
                 {templates.map((template) => (
                   <option key={template.id} value={template.id}> 
@@ -587,7 +587,7 @@ const BlogPosts = () => {
             <select
               value={filterTemplateMention}
               onChange={handleTemplateChange}
-              className="w-full p-2 mt-2 border border-gray-300 rounded"
+              className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               <option value="">No Filter</option>
               {templates.map((template) => (
