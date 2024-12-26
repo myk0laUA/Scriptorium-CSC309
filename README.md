@@ -100,8 +100,8 @@ Although the project is not fully deployed yet, the code base and Dockerization 
 
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/your-username/scriptorium.git
-   cd scriptorium
+   git clone https://github.com/myk0laUA/Scriptorium-CSC309.git
+   cd Scriptorium-CSC309
    ```
 2	**Install Dependencies** 
     ```bash
