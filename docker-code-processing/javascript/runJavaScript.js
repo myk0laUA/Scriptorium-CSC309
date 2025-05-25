@@ -10,7 +10,7 @@ function executeJavaScriptCode(code, input) {
         fs.writeFileSync(codeFile, code);
 
         const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'node-runner';
+        const dockerImage = 'javascript-runner';
 
         const command = `docker run --rm -i -v "${codePath}:/app/code.js" ${dockerImage} node /app/code.js`;
 
