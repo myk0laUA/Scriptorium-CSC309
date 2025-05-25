@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Qw121213
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [appnet]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      DATABASE_URL: postgresql://postgres:Qw121213@postgres:5432/postgres?schema=public
+      ACCESS_TOKEN: lrirwemgwrggir748nru743
+      ACCESS_TOKEN_EXPIRES_IN: 3h
+      REFRESH_TOKEN: dkfsalfnrru490494hnt84ht57tt
+      REFRESH_TOKEN_EXPIRES_IN: 3d
+      NODE_ENV: production
+    user: root                     # ensure access to docker socket
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [appnet]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  pgdata:
+
+networks:
+  appnet:

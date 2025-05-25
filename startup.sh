@@ -1,91 +1,114 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ──────────────────────────────────────────────────────────────────────────────
+# Builds language-runner images and (optionally) bootstraps the DB for local dev.
+#   • ./startup.sh            → full local setup (npm + migrate + seed + build)
+#   • ./startup.sh --build-only → only build runner images (CI / prod server)
+# ──────────────────────────────────────────────────────────────────────────────
+set -euo pipefail
 
-# Ensure the script is executed with Bash
-if [ -z "$BASH_VERSION" ]; then
-  echo "Please run this script with bash"
+###############################################################################
+# 0. Pre-flight: tools & Docker daemon
+###############################################################################
+for cmd in docker node npm; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "[ERROR] $cmd is not installed or not on PATH."
+    exit 1
+  fi
+done
+
+if ! docker info >/dev/null 2>&1; then
+  echo "[ERROR] Docker daemon is not running.  Start it and re-run this script."
   exit 1
 fi
 
-# Check for required compilers/interpreters
-required_commands=("node" "npm" "gcc" "g++" "javac" "python3" "docker")
-for command in "${required_commands[@]}"; do
-  if ! command -v $command &> /dev/null; then
-    echo "$command could not be found. Please install $command."
-    exit 1
-  fi
-done
+echo "[OK] Docker and Node are available."
 
-echo "All required commands are available."
+###############################################################################
+# 1. Parse flag
+###############################################################################
+BUILD_ONLY=false
+[[ ${1:-} == "--build-only" ]] && BUILD_ONLY=true
 
-# Install required Node.js packages
-echo "Installing required Node.js packages..."
-npm install
+###############################################################################
+# 2. Load environment variables (DATABASE_URL, JWT secrets, …)
+###############################################################################
+if [[ -f .env ]]; then
+  echo "[INFO] Loading variables from .env"
+  set -a
+  # shellcheck disable=SC1091
+  source .env
+  set +a
+fi
 
-# Run Prisma migrations
-echo "Running Prisma migrations..."
-npx prisma migrate deploy
+###############################################################################
+# 3. Local Node/Prisma bootstrap (skipped with --build-only)
+###############################################################################
+if ! $BUILD_ONLY; then
+  echo "[STEP] Installing Node modules…"
+  # We let npm run its post-install scripts so Prisma can auto-generate.
+  npm ci
 
-# Create an admin user
-echo "Creating an admin user..."
-node -e "
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
-const prisma = new PrismaClient();
+  # If you prefer to skip postinstall hooks, comment ^ and uncomment v
+  # npm ci --ignore-scripts
+  # echo "[STEP] Generating Prisma client…"
+  # npx prisma generate
 
-(async () => {
-    const username = 'admin';
-    const password = 'adminpassword';
-    const hashedPassword = await bcrypt.hash(password, 10);
+  echo "[STEP] Running Prisma migrations…"
+  npx prisma migrate deploy
 
-    try {
+  echo "[STEP] Seeding admin user…"
+  node <<'NODE'
+    const { PrismaClient } = require('@prisma/client');
+    const bcrypt = require('bcrypt');
+
+    (async () => {
+      const prisma = new PrismaClient();
+      try {
+        const exists = await prisma.user.findUnique({ where: { username: 'admin' } });
+        if (exists) {
+          console.log('[INFO] Admin user already exists – skipping seed.');
+          return;
+        }
+        const hashed = await bcrypt.hash('adminpassword', 10);
         await prisma.user.create({
-            data: {
-                username,
-                firstName: 'Admin',
-                lastName: 'User',
-                email: 'admin@uoft.com',
-                password: hashedPassword,
-                phoneNum: '0987654321',
-                role: 'ADMIN',
-            }
+          data: {
+            username: 'admin',
+            firstName: 'Admin',
+            lastName: 'User',
+            email: 'admin@uoft.com',
+            password: hashed,
+            phoneNum: '0987654321',
+            role: 'ADMIN',
+          },
         });
-        console.log('Admin user created with username: admin and password: adminpassword');
-    } catch (error) {
-        console.error('Error creating admin user:', error);
-    } finally {
+        console.log('[OK] Admin user created (admin / adminpassword)');
+      } finally {
         await prisma.$disconnect();
-    }
-})();
-"
+      }
+    })();
+NODE
+fi
 
-echo "Admin user setup complete."
+###############################################################################
+# 4. Build language-runner Docker images
+###############################################################################
+echo "[STEP] Building language-runner Docker images…"
 
-# Build Docker images for each language
-echo "Building Docker images for supported languages..."
-
-# List of supported languages
-languages=("cpp" "csharp" "go" "java" "javascript" "php" "python" "r" "ruby" "swift")
-
-for language in "${languages[@]}"; do
-  image_name="${language}-runner"
-  dockerfile_path="./docker-code-processing/${language}/Dockerfile"
-
-  # Check if the Dockerfile exists
-  if [ ! -f "$dockerfile_path" ]; then
-    echo "Dockerfile for $language not found at $dockerfile_path. Skipping..."
-    continue
-  fi
-
-  echo "Building Docker image for $language..."
-
-  docker build -t "$image_name" -f "$dockerfile_path" "./dockerfiles/${language}" || {
-    echo "Failed to build Docker image for $language."
-    exit 1
-  }
-
-  echo "Successfully built Docker image: $image_name"
+langs=()
+for d in ./docker-code-processing/*/ ; do
+  [[ -f "${d}Dockerfile" ]] && langs+=( "$(basename "$d")" )
 done
 
-echo "All Docker images built successfully."
+if [[ ${#langs[@]} -eq 0 ]]; then
+  echo "[WARN] No Dockerfiles found in docker-code-processing – nothing to build."
+else
+  for lang in "${langs[@]}"; do
+    ctx="./docker-code-processing/${lang}"
+    img="${lang}-runner"
+    echo "  · Building $img"
+    docker build -t "$img" -f "$ctx/Dockerfile" "$ctx"
+    echo "    ➜ built $img"
+  done
+fi
 
-echo "Setup complete."
+echo "[DONE] startup.sh completed successfully."
