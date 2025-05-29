@@ -17,11 +17,16 @@ RUN npx prisma generate
 RUN npm run build
 
 # ── production stage ────────────────────────────────────
+# ── production stage ──
 FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN apk add --no-cache openssl
+# install openssl + docker client
+RUN apk add --no-cache openssl docker-cli
+# copy before chmod so we can run dos2unix
+COPY entrypoint.sh ./entrypoint.sh
+RUN dos2unix ./entrypoint.sh && chmod +x ./entrypoint.sh
 
 COPY --from=builder /app/package*.json ./
 RUN npm ci --omit=dev
@@ -32,13 +37,12 @@ COPY --from=builder /app/public      ./public
 COPY --from=builder /app/prisma      ./prisma
 
 # ← Add this line:
-COPY --from=builder /app/docker-code-processing ./docker-code-processing
+COPY --from=builder /app/docker-code-processing ./.next/server/docker-code-processing
 
 # Regenerate Prisma client (if you really need to)
 RUN npx prisma generate
 
 EXPOSE 3000
-COPY entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["npm", "start"]

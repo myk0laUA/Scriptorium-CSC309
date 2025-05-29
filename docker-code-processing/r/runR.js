@@ -1,48 +1,27 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executeRCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'code.R';
-        const inputFile = 'input.txt';
+function executeRCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'r-base:4.3.1';
+    const safeInput = JSON.stringify(input);
 
-        // Default input to "\n" if none is provided
-        const normalizedInput = input || '\n';
+    // build script: write script.R, then pipe input into it
+    const script = `
+cat > script.R << 'EOF'
+${code}
+EOF
+printf '%s' ${safeInput} | Rscript script.R
+`;
 
-        // Write R code and input to files
-        fs.writeFileSync(codeFile, code);
-        fs.writeFileSync(inputFile, normalizedInput);
-
-        // Resolve paths and convert backslashes to forward slashes
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const inputPath = path.resolve(inputFile).replace(/\\/g, '/');
-
-        const dockerImage = 'r-runner';
-
-        // Docker command to execute R code
-        const command = `
-            docker run --rm -i 
-            -v "${codePath}:/app/code.R" 
-            -v "${inputPath}:/app/input.txt" 
-            ${dockerImage} 
-            Rscript code.R < input.txt
-        `.replace(/\s+/g, ' ');
-
-        const docker = exec(command, (error, stdout, stderr) => {
-            // Cleanup temp files AFTER the container completes execution
-            fs.unlinkSync(codeFile);
-            fs.unlinkSync(inputFile);
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
+    const cmd = `docker run --rm -i ${dockerImage} sh -s`;
+    const child = exec(cmd, { timeout: 10000 }, (err, stdout, stderr) => {
+      if (err)   return resolve(`Error: ${err.message}`);
+      if (stderr) return resolve(stderr.trim());
+      resolve(stdout.trim());
     });
+
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executeRCode };

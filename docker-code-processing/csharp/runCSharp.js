@@ -1,49 +1,30 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executeCSharpCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'code.cs';
+function executeCSharpCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'csharp-runner';
+    const safeInput = JSON.stringify(input);
 
-        try {
-            // Write the C# script to a file
-            fs.writeFileSync(codeFile, code);
-        } catch (error) {
-            return reject(`Error writing to file: ${error.message}`);
-        }
+    // Emit a .csx script (no Program/Main boilerplate)
+    const script = `
+cat > code.csx << 'EOF'
+#!/usr/bin/env dotnet-script
+${code}
+EOF
+printf '%s' ${safeInput} | dotnet-script code.csx
+`;
 
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'csharp-runner';
+    const cmd = `docker run --rm -i --entrypoint sh ${dockerImage} -s`;
+    console.log('⎈ CMD:', cmd);
 
-        // Command to run the C# script in the Docker container
-        const command = `docker run --rm -i -v "${codePath}:/app/code.cs" ${dockerImage} dotnet-script /app/code.cs`;
-
-        const docker = exec(command, (error, stdout, stderr) => {
-            // Cleanup the file after execution
-            try {
-                if (fs.existsSync(codeFile)) {
-                    fs.unlinkSync(codeFile);
-                }
-            } catch (unlinkError) {
-                console.error(`Error cleaning up file: ${unlinkError.message}`);
-            }
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
-
-        // Write input to the Docker container's stdin
-        if (input) {
-            docker.stdin.write(input);
-        }
-        docker.stdin.end();
+    const child = exec(cmd, { timeout: 15000 }, (err, stdout, stderr) => {
+      if (err)   return resolve(`Error: ${err.message}`);
+      if (stderr) return resolve(stderr.trim());
+      resolve(stdout.trim());
     });
+
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executeCSharpCode };

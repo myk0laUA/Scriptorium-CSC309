@@ -1,35 +1,26 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executeRubyCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'code.rb';
+function executeRubyCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'ruby:3.0-alpine';
+    const safeInput = JSON.stringify(input);
 
-        fs.writeFileSync(codeFile, code);
+    const script = `
+cat > script.rb << 'EOF'
+${code}
+EOF
+printf '%s' ${safeInput} | ruby script.rb
+`;
 
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'ruby-runner';
-
-        const command = `docker run --rm -i -v "${codePath}:/app/code.rb" ${dockerImage} ruby /app/code.rb`;
-
-        const docker = exec(command, (error, stdout, stderr) => {
-            fs.unlinkSync(codeFile);
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
-
-        if (input) {
-            docker.stdin.write(input);
-        }
-        docker.stdin.end();
+    const cmd = `docker run --rm -i ${dockerImage} sh -s`;
+    const child = exec(cmd, { timeout: 10000 }, (err, stdout, stderr) => {
+      if (err)   return resolve(`Error: ${err.message}`);
+      if (stderr) return resolve(stderr.trim());
+      resolve(stdout.trim());
     });
+
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executeRubyCode };

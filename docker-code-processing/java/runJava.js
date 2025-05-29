@@ -1,45 +1,29 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executeJavaCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'Main.java'; // File name should match the class name
+function executeJavaCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'openjdk:17-alpine';
+    const safeInput = JSON.stringify(input);
 
-        // Write Java code to a file
-        fs.writeFileSync(codeFile, code);
+    // Build a shell script that writes Main.java, compiles, and runs with piped input
+    const script = `
+cat > Main.java << 'EOF'
+${code}
+EOF
+javac Main.java
+printf '%s' ${safeInput} | java Main
+`;
 
-        // Resolve the path and normalize for Docker
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'java-runner';
-
-        // Docker command to compile and run the Java file
-        const command = `
-            docker run --rm -i 
-            -v "${codePath}:/app/Main.java" 
-            -w /app ${dockerImage} 
-            sh -c "javac Main.java && java Main"
-        `.replace(/\s+/g, ' '); // Normalize spaces for compatibility
-
-        const docker = exec(command, (error, stdout, stderr) => {
-            // Cleanup temp file AFTER execution
-            fs.unlinkSync(codeFile);
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
-
-        // Pass input to the Docker container's stdin if provided
-        if (input) {
-            docker.stdin.write(input);
-        }
-        docker.stdin.end();
+    // Run the script inside sh (-s reads from stdin)
+    const cmd = `docker run --rm -i ${dockerImage} sh -s`;
+    const child = exec(cmd, { timeout: 10000 }, (err, stdout, stderr) => {
+      if (err)   return resolve(`Error: ${err.message}`);
+      if (stderr) return resolve(stderr.trim());
+      resolve(stdout.trim());
     });
+
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executeJavaCode };

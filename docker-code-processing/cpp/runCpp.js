@@ -1,35 +1,31 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executeCppCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'code.cpp';
+function executeCppCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'gcc:latest';
 
-        fs.writeFileSync(codeFile, code);
+    // Build the shell snippet to run inside the container:
+    // 1) write code.cpp
+    // 2) compile + run, piping in `input`
+    const safeInput = JSON.stringify(input);
+    const script = `
+cat > code.cpp << 'EOF'
+${code}
+EOF
+g++ code.cpp -o code
+printf '%s' ${safeInput} | ./code
+`;
 
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'cpp-runner';
-
-        const command = `docker run --rm -i -v "${codePath}:/app/code.cpp" -w /app ${dockerImage} sh -c "g++ code.cpp -o code && ./code"`;
-
-        const docker = exec(command, (error, stdout, stderr) => {
-            fs.unlinkSync(codeFile);
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
-
-        if (input) {
-            docker.stdin.write(input);
-        }
-        docker.stdin.end();
+    // Spawn a shell (-s) that reads our `script` from stdin
+    const cmd = `docker run --rm -i ${dockerImage} sh -s`;
+    const child = exec(cmd, { timeout: 10000 }, (err, stdout, stderr) => {
+      if (err)   return resolve(`Error: ${err.message}`);
+      if (stderr) return resolve(stderr.trim());
+      resolve(stdout.trim());
     });
+
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executeCppCode };

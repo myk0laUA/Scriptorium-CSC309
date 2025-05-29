@@ -1,35 +1,27 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executePHPCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'code.php';
+function executePHPCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'php:8.0-cli-alpine';
+    const safeInput = JSON.stringify(input);
 
-        fs.writeFileSync(codeFile, code);
+    const script = `
+cat > script.php << 'EOF'
+<?php
+${code}
+EOF
+printf '%s' ${safeInput} | php script.php
+`;
 
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'php-runner';
-
-        const command = `docker run --rm -i -v "${codePath}:/app/code.php" ${dockerImage} php /app/code.php`;
-
-        const docker = exec(command, (error, stdout, stderr) => {
-            fs.unlinkSync(codeFile);
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
-
-        if (input) {
-            docker.stdin.write(input);
-        }
-        docker.stdin.end();
+    const cmd = `docker run --rm -i ${dockerImage} sh -s`;
+    const child = exec(cmd, { timeout: 10000 }, (err, stdout, stderr) => {
+      if (err)   return resolve(`Error: ${err.message}`);
+      if (stderr) return resolve(stderr.trim());
+      resolve(stdout.trim());
     });
+
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executePHPCode };

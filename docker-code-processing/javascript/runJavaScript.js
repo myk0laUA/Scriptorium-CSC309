@@ -1,37 +1,47 @@
-const fs = require('fs');
 const { exec } = require('child_process');
-const path = require('path');
 
-function executeJavaScriptCode(code, input) {
-    return new Promise((resolve, reject) => {
-        const codeFile = 'code.js';
+function executeJavaScriptCode(code, input = '') {
+  return new Promise((resolve) => {
+    const dockerImage = 'node:16-alpine';
+    const safeInput = JSON.stringify(input);
 
-        // Write the JavaScript code to a file
-        fs.writeFileSync(codeFile, code);
+    // 1) Build a little shell script that:
+    //    - creates script.js via a here-doc
+    //    - pipes our `input` into it via printf | node script.js
+    const script = `
+cat > script.js << 'EOF'
+${code}
+EOF
+printf '%s' ${safeInput} | node script.js
+`;
 
-        const codePath = path.resolve(codeFile).replace(/\\/g, '/');
-        const dockerImage = 'javascript-runner';
+    // 2) Launch the container, feeding our 'script' into sh -s
+    const cmd = `docker run --rm -i ${dockerImage} sh -s`;
+    console.log('⎈ [DEBUG] executeJavaScriptCode CMD:', cmd);
 
-        const command = `docker run --rm -i -v "${codePath}:/app/code.js" ${dockerImage} node /app/code.js`;
+    const child = exec(cmd, { timeout: 10000 }, (err, stdout, stderr) => {
+      console.log('⎈ [DEBUG] STDOUT:', stdout);
+      console.error('⎈ [DEBUG] STDERR:', stderr);
 
-        const docker = exec(command, (error, stdout, stderr) => {
-            // Clean up temp files
-            fs.unlinkSync(codeFile);
-
-            if (error) {
-                resolve(`Error: ${error.message}`); // Resolve with the error message
-            } else if (stderr) {
-                resolve(stderr.trim()); // Resolve with trimmed stderr output
-            } else {
-                resolve(stdout.trim()); // Resolve with stdout output
-            }
-        });
-
-        if (input) {
-            docker.stdin.write(input);
-        }
-        docker.stdin.end();
+      if (err) {
+        console.error('⎈ [DEBUG] ERROR OBJ:', err);
+        return resolve(`Error: ${err.message}`);
+      }
+      if (stderr) {
+        // filter out the pull/log lines if any
+        const filtered = stderr
+          .split('\n')
+          .filter(line => !/Unable to find image|Pulling from library|Status:|Digest:/.test(line))
+          .join('\n')
+          .trim();
+        if (filtered) return resolve(filtered);
+      }
+      resolve(stdout.trim());
     });
+
+    // 3) send our in-container script
+    child.stdin.end(script);
+  });
 }
 
 module.exports = { executeJavaScriptCode };
