@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────────────────────
-# Builds language-runner images and (optionally) bootstraps the DB for local dev.
-#   • ./startup.sh            → full local setup (npm + migrate + seed + build)
-#   • ./startup.sh --build-only → only build runner images (CI / prod server)
+# Builds only the C# runner image and (optionally) bootstraps the DB for dev.
+#   • ./startup.sh            → full local setup (npm + migrate + seed + build csharp)
+#   • ./startup.sh --build-only → only build csharp-runner (CI / prod server)
 # ──────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
@@ -45,13 +45,7 @@ fi
 ###############################################################################
 if ! $BUILD_ONLY; then
   echo "[STEP] Installing Node modules…"
-  # We let npm run its post-install scripts so Prisma can auto-generate.
   npm ci
-
-  # If you prefer to skip postinstall hooks, comment ^ and uncomment v
-  # npm ci --ignore-scripts
-  # echo "[STEP] Generating Prisma client…"
-  # npx prisma generate
 
   echo "[STEP] Running Prisma migrations…"
   npx prisma migrate deploy
@@ -60,7 +54,6 @@ if ! $BUILD_ONLY; then
   node <<'NODE'
     const { PrismaClient } = require('@prisma/client');
     const bcrypt = require('bcrypt');
-
     (async () => {
       const prisma = new PrismaClient();
       try {
@@ -90,25 +83,18 @@ NODE
 fi
 
 ###############################################################################
-# 4. Build language-runner Docker images
+# 4. Build only the C# runner Docker image
 ###############################################################################
-echo "[STEP] Building language-runner Docker images…"
+echo "[STEP] Building the C# runner Docker image…"
 
-langs=()
-for d in ./docker-code-processing/*/ ; do
-  [[ -f "${d}Dockerfile" ]] && langs+=( "$(basename "$d")" )
-done
-
-if [[ ${#langs[@]} -eq 0 ]]; then
-  echo "[WARN] No Dockerfiles found in docker-code-processing – nothing to build."
-else
-  for lang in "${langs[@]}"; do
-    ctx="./docker-code-processing/${lang}"
-    img="${lang}-runner"
-    echo "  · Building $img"
-    docker build -t "$img" -f "$ctx/Dockerfile" "$ctx"
-    echo "    ➜ built $img"
-  done
+if [[ ! -f "./docker-code-processing/csharp/Dockerfile" ]]; then
+  echo "[ERROR] Missing Dockerfile at docker-code-processing/csharp/Dockerfile"
+  exit 1
 fi
 
-echo "[DONE] startup.sh completed successfully."
+docker build \
+  -t csharp-runner \
+  -f ./docker-code-processing/csharp/Dockerfile \
+  ./docker-code-processing/csharp
+
+echo "[DONE] csharp-runner image built successfully."
