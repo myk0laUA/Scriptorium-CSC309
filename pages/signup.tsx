@@ -19,11 +19,11 @@ interface FormData {
 }
 
 const availableAvatars: string[] = [
-  'http://localhost:3000/avatars/avatar1.png',
-  'http://localhost:3000/avatars/avatar2.png',
-  'http://localhost:3000/avatars/avatar3.png',
-  'http://localhost:3000/avatars/avatar4.png',
-  'http://localhost:3000/avatars/avatar5.png',
+  '/avatars/avatar1.png',
+  '/avatars/avatar2.png',
+  '/avatars/avatar3.png',
+  '/avatars/avatar4.png',
+  '/avatars/avatar5.png',
 ];
 
 // Logic influenced by ChatGPT
