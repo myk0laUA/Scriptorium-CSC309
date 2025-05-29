@@ -30,7 +30,7 @@ const CreatePost: React.FC = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/templates/public?limit=100');
+        const response = await fetch('/api/templates/public?limit=100');
         if (!response.ok) {
           throw new Error('Failed to fetch templates');
         }
@@ -79,7 +79,7 @@ const CreatePost: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/blogPost', {
+      const response = await fetch('/api/blogPost', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -33,7 +33,7 @@ const EditProfile = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/users/edit-profile', {
+        const response = await fetch('/api/users/edit-profile', {
           method: 'PUT',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ const EditProfile = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/users/edit-profile', {
+      const response = await fetch('/api/users/edit-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -104,7 +104,7 @@ const Comment = ({
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/reports`, {
+      const response = await fetch('/api/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -40,54 +40,69 @@ const BlogPosts = () => {
   }, []);  
 
   useEffect(() => {
-    if (showFilterModal) {
-      const fetchTemplates = async () => {
-        try {
-          const response = await fetch('http://localhost:3000/api/templates/public?limit=100');
-          if (!response.ok) {
-            throw new Error('Failed to fetch templates');
-          }
-          const data = await response.json();
-          setTemplates(data.templates);
-        } catch (err) {
-          setError(err.message);
+  if (showFilterModal) {
+    const fetchTemplates = async () => {
+      try {
+        const response = await fetch('/api/templates/public?limit=100');
+        if (!response.ok) {
+          throw new Error('Failed to fetch templates');
         }
-      };
-
-      fetchTemplates();
-    }
-  }, [showFilterModal]);
-
-  const fetchBlogPosts = async (title = '', description = '', tags = '', sort = 'oldest', templateMention, linkToTemplates = '', page = 1, limit = 10) => {
-    try {
-      let response;
-      if (templateMention) {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&templateMention=${templateMention}&linkToTemplates=${linkToTemplates}&page=${page}&limit=${limit}`);
-      } else {
-        response = await fetch(`http://localhost:3000/api/blogPost?title=${title}&description=${description}&tags=${tags}&sort=${sort}&linkToTemplates=${linkToTemplates}&page=${page}&limit=${limit}`);
+        const data = await response.json();
+        setTemplates(data.templates);
+      } catch (err) {
+        setError(err.message);
       }
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch blog posts');
-      }
+    };
 
-      const data = await response.json();
+    fetchTemplates();
+  }
+}, [showFilterModal]);
 
-      const visiblePosts = data.data.filter((post) => !post.hidden);
 
-      console.log("Fetched blog posts:", visiblePosts);
+const fetchBlogPosts = async (
+  title = '',
+  description = '',
+  tags = '',
+  sort = 'oldest',
+  templateMention,
+  linkToTemplates = '',
+  page = 1,
+  limit = 10
+) => {
+  try {
+    const base = `/api/blogPost?title=${encodeURIComponent(title)}` +
+                 `&description=${encodeURIComponent(description)}` +
+                 `&tags=${encodeURIComponent(tags)}` +
+                 `&sort=${encodeURIComponent(sort)}` +
+                 `&linkToTemplates=${encodeURIComponent(linkToTemplates)}` +
+                 `&page=${page}` +
+                 `&limit=${limit}`;
 
-      setBlogPosts(visiblePosts); 
-      setCurrentPage(data.page);
-      setLimit(data.limit);
-      setTotalPages(Math.ceil(data.totalCount / limit));
+    const url = templateMention
+      ? `${base}&templateMention=${encodeURIComponent(templateMention)}`
+      : base;
 
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false); 
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch blog posts');
     }
-  };
+
+    const data = await response.json();
+    const visiblePosts = data.data.filter((post) => !post.hidden);
+
+    console.log("Fetched blog posts:", visiblePosts);
+
+    setBlogPosts(visiblePosts);
+    setCurrentPage(data.page);
+    setLimit(data.limit);
+    setTotalPages(Math.ceil(data.totalCount / limit));
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchBlogPosts();
@@ -100,20 +115,22 @@ const BlogPosts = () => {
   }, [blogPosts]);
 
   const fetchComments = async (postId, sort = 'recent') => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/comments?postId=${postId}&sort=${sort}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch comments');
-      }
-      const data = await response.json();
-      setComments((prevComments) => ({
-        ...prevComments,
-        [postId]: data.comments,
-      }));
-    } catch (err) {
-      setError(err.message);
+  try {
+    const response = await fetch(
+      `/api/comments?postId=${encodeURIComponent(postId)}&sort=${encodeURIComponent(sort)}`
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch comments');
     }
-  };
+    const data = await response.json();
+    setComments((prevComments) => ({
+      ...prevComments,
+      [postId]: data.comments,
+    }));
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const handleAddComment = async (postId, parentCommentId = null, body) => {
     try {
@@ -123,7 +140,7 @@ const BlogPosts = () => {
         return;
       }
   
-      const response = await fetch(`http://localhost:3000/api/comments`, {
+      const response = await fetch('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -180,7 +197,7 @@ const BlogPosts = () => {
         return;
       }
   
-      const response = await fetch(`http://localhost:3000/api/comments/${commentId}`, {
+      const response = await fetch(`/api/comments/${encodeURIComponent(commentId)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +291,7 @@ const BlogPosts = () => {
       });
   
       // Send the vote to the backend
-      const response = await fetch(`http://localhost:3000/api/comments/${commentId}/vote`, {
+      const response = await fetch(`/api/comments/${encodeURIComponent(commentId)}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -328,7 +345,7 @@ const BlogPosts = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/reports`, {
+      const response = await fetch('/api/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -407,7 +424,7 @@ const BlogPosts = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/blogPost/${id}`, {
+      const response = await fetch(`/api/blogPost/${encodeURIComponent(id)}`,{
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -433,7 +450,7 @@ const BlogPosts = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/blogPost/${id}`, {
+      const response = await fetch(`/api/blogPost/${encodeURIComponent(id)}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

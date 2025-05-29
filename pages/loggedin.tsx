@@ -20,7 +20,7 @@ const LoggedIn = () => {
 
     const fetchAvatar = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/users/retrieve', {
+        const response = await fetch('/api/users/retrieve', {
           headers: { Authorization: `Bearer ${token}` },
         });
 

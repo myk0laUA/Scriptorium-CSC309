@@ -23,31 +23,35 @@ const AdminReports = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchReports = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        setError('No authentication token found');
-        return;
-      }
+  try {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      setError('No authentication token found');
+      return;
+    }
 
-      const response = await fetch(`http://localhost:3000/api/admin/reports?contentType=${contentType}&sortByReports=${sortByReports}&page=${page}`, {
+    const response = await fetch(
+      `/api/admin/reports?contentType=${contentType}` +
+      `&sortByReports=${sortByReports}&page=${page}`,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch reports');
       }
+    );
 
-      const data = await response.json();
-      setReports(data.content);
-      setTotalPages(data.totalPages);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error('Failed to fetch reports');
     }
+
+    const data = await response.json();
+    setReports(data.content);
+    setTotalPages(data.totalPages);
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
   };
 
   useEffect(() => {
@@ -74,7 +78,7 @@ const AdminReports = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/admin/reports/hide`, {
+      const response = await fetch('/api/admin/reports/hide', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
