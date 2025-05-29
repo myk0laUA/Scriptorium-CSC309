@@ -56,8 +56,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 dark:bg-gray-600 text-white dark:text-gray-200 p-4 flex justify-between items-center transition duration-300">
-      <div className="flex space-x-6 items-center">
+    <nav className="bg-gray-800 dark:bg-gray-600 text-white dark:text-gray-200 p-4 flex flex-wrap justify-between items-center transition duration-300">
+      <div className="flex flex-wrap items-center space-x-2 sm:space-x-6 overflow-x-auto">
         <Link href="/" legacyBehavior>
           <a className={`${getLinkClass('/')} pr-4 border-r border-gray-500 dark:border-gray-700`}>
             Home
@@ -78,7 +78,7 @@ const Navbar = () => {
           </Link>
         )}
       </div>
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-wrap items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0 overflow-x-auto">
         <ThemeToggle />
         {isLoggedIn && avatar && (
           <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 dark:border-blue-300">
@@ -87,14 +87,14 @@ const Navbar = () => {
         )}
         {isAdmin && (
           <Link href="/admin-reports" legacyBehavior>
-            <a className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300">
+            <a className="bg-blue-500 dark:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300 whitespace-nowrap">
               Admin Reports
             </a>
           </Link>
         )}
         {isLoggedIn && (
           <Link href="/edit-profile" legacyBehavior>
-            <a className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800 transition duration-300">
+            <a className="bg-green-500 dark:bg-green-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-green-600 dark:hover:bg-green-800 transition duration-300 whitespace-nowrap">
               Edit Profile
             </a>
           </Link>
@@ -102,13 +102,13 @@ const Navbar = () => {
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
-            className="bg-red-500 dark:bg-red-700 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-800 transition duration-300"
+            className="bg-red-500 dark:bg-red-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-red-600 dark:hover:bg-red-800 transition duration-300 whitespace-nowrap"
           >
             Logout
           </button>
         ) : (
           <Link href="/login" legacyBehavior>
-            <a className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300">
+            <a className="bg-blue-500 dark:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300 whitespace-nowrap">
               Login
             </a>
           </Link>
