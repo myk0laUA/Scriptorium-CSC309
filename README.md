@@ -94,6 +94,7 @@ cd Scriptorium-CSC309
 ./startup.sh --build-only
 docker compose up --build
 ```
+Once containers spin up, visit http://localhost:3000
 
 ## 📚 Core User Stories
 
