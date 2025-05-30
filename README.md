@@ -82,7 +82,7 @@
 * Swap `DATABASE_URL` to move from SQLite to Postgres.
 
 
-```markdown
+
 ## 🏃‍♂️ Running Locally (Docker)
 
 > **Prerequisites:** Docker & Docker Compose
