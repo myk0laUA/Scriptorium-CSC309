@@ -85,24 +85,15 @@
 
 
 ```markdown
-## 🏃‍♂️ Running Locally
+## 🏃‍♂️ Running Locally (Docker)
 
-> **Prereqs:** Node v20+, npm / yarn, and Docker.
+> **Prerequisites:** Docker & Docker Compose
 
 ```bash
-# 1) Clone & install
+# Clone & build all services, then launch
 git clone https://github.com/Myk0laUA/Scriptorium-CSC309.git
 cd Scriptorium-CSC309
-npm install         # or yarn / pnpm
-
-# 2) DB migrations (SQLite by default)
-npx prisma migrate dev
-
-# 3) Start dev server
-npm run dev         # http://localhost:3000
-```
-## ⚡ One-liner with Docker Compose
-```bash
+./startup.sh --build-only
 docker compose up --build
 ```
 
