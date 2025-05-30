@@ -26,8 +26,6 @@
 4. [Running Locally](#running-locally)  
 5. [Core User Stories](#core-user-stories)  
 6. [Roadmap](#roadmap)  
-7. [Contributing](#contributing)  
-8. [License](#license)
 
 ---
 
