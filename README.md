@@ -107,8 +107,9 @@ Blog & Comments – create, edit, delete posts; threaded comments & ratings.
 Reporting & Admin – users report content; admins moderate.
 
 </details>
-```markdown
+
 <a name="roadmap"></a>
+
 ## 🛣️ Roadmap
 
 Full TypeScript migration
