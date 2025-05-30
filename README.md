@@ -28,8 +28,8 @@
 6. [Roadmap](#roadmap)  
 
 ---
-
-## 🚀 Key Features(#key-features)
+<a name="key-features"></a>
+## 🚀 Key Features
 
 | Domain              | Highlights                                                                                                                                     |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -41,8 +41,8 @@
 | **Security**        | Docker resource limits (CPU, RAM, exec time) and input sanitization.                                                                           |
 
 ---
-
-## 🛠️ Tech Stack(#tech-stack)
+<a name="tech-stack"></a>
+## 🛠️ Tech Stack
 
 | Layer           | Technology                                                  |
 |-----------------|-------------------------------------------------------------|
@@ -54,7 +54,7 @@
 | **Infra**       | AWS EC2, Nginx                                              |
 
 ---
-
+<a name="architecture"></a>
 ## 🧩 Architecture(#architecture) 
 
 ```text
@@ -82,7 +82,7 @@
 * Swap `DATABASE_URL` to move from SQLite to Postgres.
 
 
-
+<a name="running-locally"></a>
 ## 🏃‍♂️ Running Locally (Docker)
 
 > **Prerequisites:** Docker & Docker Compose
@@ -95,7 +95,7 @@ cd Scriptorium-CSC309
 docker compose up --build
 ```
 Once containers spin up, visit http://localhost:3000
-
+<a name="core-user-stories"></a>
 ## 📚 Core User Stories
 
 <details> <summary>Click to expand</summary>
@@ -110,7 +110,7 @@ Blog & Comments – create, edit, delete posts; threaded comments & ratings.
 Reporting & Admin – users report content; admins moderate.
 
 </details>
-
+<a name="roadmap"></a>
 ## 🛣️ Roadmap
 
 Full TypeScript migration
