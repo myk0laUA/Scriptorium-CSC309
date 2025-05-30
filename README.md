@@ -8,9 +8,6 @@
   <a href="http://3.17.227.214/" target="_blank">
     <img src="https://img.shields.io/badge/Live-Demo-blue?logo=amazon-aws&style=for-the-badge" alt="live demo"/>
   </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/Myk0laUA/Scriptorium-CSC309?style=for-the-badge" />
-  </a>
 </p>
 
 > Built for **CSC309 – Programming on the Web** (University of Toronto).  
