@@ -96,5 +96,13 @@ docker build \
   -t csharp-runner \
   -f ./docker-code-processing/csharp/Dockerfile \
   ./docker-code-processing/csharp
-
+docker pull gcc:latest
+docker pull golang:1.17-alpine
+docker pull openjdk:17-alpine
+docker pull node:16-alpine
+docker pull php:8.0-cli-alpine
+docker pull python:3.10-alpine
+docker pull r-base:4.3.1
+docker pull ruby:3.0-alpine
+docker pull swift:5.5
 echo "[DONE] csharp-runner image built successfully."
