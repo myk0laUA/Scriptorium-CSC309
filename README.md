@@ -55,7 +55,7 @@
 
 ---
 <a name="architecture"></a>
-## 🧩 Architecture(#architecture) 
+## 🧩 Architecture
 
 ```text
 ┌─────────┐   REST    ┌────────────────────┐
