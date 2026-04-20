@@ -19,13 +19,12 @@ services:
     build: .
     ports:
       - "80:3000"
-      - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:Qw121213@postgres:5432/postgres?schema=public
-      ACCESS_TOKEN: lrirwemgwrggir748nru743
-      ACCESS_TOKEN_EXPIRES_IN: 3h
-      REFRESH_TOKEN: dkfsalfnrru490494hnt84ht57tt
-      REFRESH_TOKEN_EXPIRES_IN: 3d
+      DATABASE_URL: ${DATABASE_URL}
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
+      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN}
+      REFRESH_TOKEN: ${REFRESH_TOKEN}
+      REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN}
       NODE_ENV: production
     user: root                     # ensure access to docker socket
     depends_on:
