@@ -3,9 +3,9 @@ services:
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Qw121213
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks: [appnet]
@@ -25,18 +25,17 @@ services:
       ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN}
       REFRESH_TOKEN: ${REFRESH_TOKEN}
       REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN}
-      NODE_ENV: production
-    user: root                     # ensure access to docker socket
+      NODE_ENV: ${NODE_ENV}
+    user: root
     depends_on:
       postgres:
         condition: service_healthy
     networks: [appnet]
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock   # so `docker` CLI can talk to the host daemon
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   pgdata:
-  code-sandbox:
 
 networks:
   appnet:
