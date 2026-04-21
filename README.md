@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center">
-  <a href="http://18.217.146.136/" target="_blank">
+  <a href="http://3.17.227.214/" target="_blank">
     <img src="https://img.shields.io/badge/Live-Demo-blue?logo=amazon-aws&style=for-the-badge" alt="live demo"/>
   </a>
 </p>
