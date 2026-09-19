@@ -51,15 +51,15 @@ const Navbar = () => {
 
   const getLinkClass = (path) => {
     return router.pathname === path
-      ? 'text-red-500 dark:text-red-400 font-bold hover:text-red-600 dark:hover:text-red-500 transition duration-300 text-lg'
-      : 'hover:text-gray-400 dark:hover:text-gray-300 transition duration-300 text-lg';
+      ? 'rounded-lg bg-white/10 px-3 py-2 text-white font-semibold text-sm'
+      : 'rounded-lg px-3 py-2 text-gray-300 hover:bg-white/5 hover:text-white text-sm font-medium';
   };
 
   return (
-    <nav className="bg-gray-800 dark:bg-gray-600 text-white dark:text-gray-200 p-4 flex flex-wrap justify-between items-center transition duration-300">
-      <div className="flex flex-wrap items-center space-x-2 sm:space-x-6 overflow-x-auto">
+    <nav aria-label="Main navigation" className="bg-gray-800 dark:bg-gray-950 text-white px-4 py-3 sm:px-6 lg:px-8 flex flex-wrap gap-3 justify-between items-center border-b border-gray-700">
+      <div className="flex flex-wrap items-center gap-1">
         <Link href="/" legacyBehavior>
-          <a className={`${getLinkClass('/')} pr-4 border-r border-gray-500 dark:border-gray-700`}>
+          <a className={getLinkClass('/')} aria-current={router.pathname === '/' ? 'page' : undefined}>
             Home
           </a>
         </Link>
@@ -78,7 +78,7 @@ const Navbar = () => {
           </Link>
         )}
       </div>
-      <div className="flex flex-wrap items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0 overflow-x-auto">
+      <div className="flex flex-wrap items-center gap-2">
         <ThemeToggle />
         {isLoggedIn && avatar && (
           <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 dark:border-blue-300">
@@ -87,14 +87,14 @@ const Navbar = () => {
         )}
         {isAdmin && (
           <Link href="/admin-reports" legacyBehavior>
-            <a className="bg-blue-500 dark:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300 whitespace-nowrap">
+            <a className="bg-blue-600 dark:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-700 dark:hover:bg-blue-800 transition duration-300 whitespace-nowrap">
               Admin Reports
             </a>
           </Link>
         )}
         {isLoggedIn && (
           <Link href="/edit-profile" legacyBehavior>
-            <a className="bg-green-500 dark:bg-green-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-green-600 dark:hover:bg-green-800 transition duration-300 whitespace-nowrap">
+            <a className="bg-green-600 dark:bg-green-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-green-700 dark:hover:bg-green-800 transition duration-300 whitespace-nowrap">
               Edit Profile
             </a>
           </Link>
@@ -108,7 +108,7 @@ const Navbar = () => {
           </button>
         ) : (
           <Link href="/login" legacyBehavior>
-            <a className="bg-blue-500 dark:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-300 whitespace-nowrap">
+            <a className="bg-blue-600 dark:bg-blue-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-700 dark:hover:bg-blue-800 transition duration-300 whitespace-nowrap">
               Login
             </a>
           </Link>

@@ -47,7 +47,7 @@ const EditTemplatePage = () => {
   return (
     <form onSubmit={handleSubmit} className="p-6">
       {/* Form fields for title, explanation, tags, code */}
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
         Save Changes
       </button>
     </form>

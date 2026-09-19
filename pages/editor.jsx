@@ -189,11 +189,14 @@ const EditorPage = () => {
 
   return (
     <Layout>
-      <div className="p-6 dark:bg-gray-900 dark:text-gray-200 transition duration-300">
-        <div className="mb-4">
+      <div className="page-section min-w-0">
+        <h1 className="page-title">Code Editor</h1>
+        <p className="page-description">Write, run, and refine your code.</p>
+        <div className="surface-card p-4 sm:p-5 mb-5">
           <input
             type="text"
             placeholder="Title"
+            aria-label="Template title"
             value={templateDetails.title}
             onChange={(e) =>
               setTemplateDetails((prev) => ({
@@ -206,6 +209,7 @@ const EditorPage = () => {
           />
           <textarea
             placeholder="Explanation"
+            aria-label="Template explanation"
             value={templateDetails.explanation}
             onChange={(e) =>
               setTemplateDetails((prev) => ({
@@ -219,6 +223,7 @@ const EditorPage = () => {
           <input
             type="text"
             placeholder="Tags (comma-separated)"
+            aria-label="Template tags"
             value={templateDetails.tags}
             onChange={(e) =>
               setTemplateDetails((prev) => ({
@@ -230,23 +235,23 @@ const EditorPage = () => {
             disabled={!isAuthenticated ? true : false}
           />
         </div>
-        <div className="flex justify-between mb-4">
+        <div className="flex flex-wrap gap-3 justify-between mb-4">
           <LanguageSelector
             language={language}
             onChange={(e) => setLanguage(e.target.value)}
           />
-          <div className="flex space-x-4">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={handleExecute}
               disabled={isExecuting}
-              className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800"
+              className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800"
             >
               {isExecuting ? 'Executing...' : 'Run Code'}
             </button>
             {isAuthenticated && isEditing && (
               <button
                 onClick={handleSaveChanges}
-                className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800"
+                className="bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-800"
               >
                 Save Changes
               </button>
@@ -254,7 +259,7 @@ const EditorPage = () => {
             {isAuthenticated && isForking && (
               <button
                 onClick={handleForkTemplate}
-                className="bg-purple-500 dark:bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-600 dark:hover:bg-purple-800"
+                className="bg-purple-600 dark:bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-700 dark:hover:bg-purple-800"
               >
                 Fork Template
               </button>
@@ -262,31 +267,36 @@ const EditorPage = () => {
             {isAuthenticated && !isEditing && !isForking && (
               <button
                 onClick={handleSaveAsTemplate}
-                className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800"
+                className="bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-800"
               >
                 Save as Template
               </button>
             )}
           </div>
         </div>
+        <div className="overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
         <CodeEditor
           language={language}
           code={code}
           onChange={(value) => setCode(value)}
         />
-        <div className="mt-4">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200">Input:</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+        <div>
+          <h3 className="mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200">Input</h3>
           <textarea
+            aria-label="Program input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full h-24 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+            className="w-full h-32 p-3 font-mono text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
           />
         </div>
-        <div className="mt-4">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200">Output:</h3>
-          <pre className="w-full h-24 p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+        <div className="min-w-0">
+          <h3 className="mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200">Output</h3>
+          <pre aria-live="polite" className="w-full h-32 overflow-auto p-3 font-mono text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             {output}
           </pre>
+        </div>
         </div>
       </div>
     </Layout>

@@ -58,12 +58,12 @@ const LoggedIn = () => {
             )}
             <a
               href="/edit-profile"
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Edit Profile
             </a>
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               onClick={handleLogout}
             >
               Log Out

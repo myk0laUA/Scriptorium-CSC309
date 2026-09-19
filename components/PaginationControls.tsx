@@ -8,25 +8,25 @@ interface PaginationControlsProps {
 }
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({ currentPage, totalPages, onPageChange }) => (
-  <div className="flex justify-center mt-4 space-x-2">
+  <nav aria-label="Pagination" className="flex flex-wrap items-center justify-center gap-2 mt-8 text-sm">
     <button
       onClick={() => onPageChange(currentPage - 1)}
       disabled={currentPage === 1}
-      className="px-4 py-2 border rounded-l bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+      className="secondary-button px-4 py-2 rounded disabled:opacity-40"
     >
       Previous
     </button>
-    <span className="px-4 py-2 border-t border-b bg-gray-100">
-      Page {currentPage} of {totalPages}
+    <span className="px-2 py-2 text-gray-600 dark:text-gray-400" aria-live="polite">
+      Page {currentPage} of {Math.max(1, totalPages)}
     </span>
     <button
       onClick={() => onPageChange(currentPage + 1)}
-      disabled={currentPage === totalPages}
-      className="px-4 py-2 border rounded-r bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+      disabled={currentPage >= totalPages}
+      className="secondary-button px-4 py-2 rounded disabled:opacity-40"
     >
       Next
     </button>
-  </div>
+  </nav>
 );
 
 export default PaginationControls;

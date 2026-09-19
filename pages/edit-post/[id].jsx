@@ -1,3 +1,4 @@
+import FormShell from '../../components/FormShell';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -107,7 +108,8 @@ const EditPost = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-gray-900 p-6 shadow-lg rounded-lg">
+    <FormShell>
+    <div className="form-card">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Update Blog Post</h2>
 
       {success && <div className="text-green-500 dark:text-green-400 mb-4">{success}</div>}
@@ -165,7 +167,7 @@ const EditPost = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 w-full"
+          className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800 w-full"
         >
           Update Post
         </button>
@@ -180,13 +182,14 @@ const EditPost = () => {
       {error === 'You are not logged in' && (
         <div className="mt-6">
           <Link href="/login">
-            <button className="bg-blue-500 dark:bg-blue-700 text-white px-6 py-3 rounded-lg text-xl hover:bg-blue-600 dark:hover:bg-blue-800 w-full">
+            <button className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-3 rounded-lg text-xl hover:bg-blue-700 dark:hover:bg-blue-800 w-full">
               Log In
             </button>
           </Link>
         </div>
       )}
     </div>
+    </FormShell>
   );
 };
 

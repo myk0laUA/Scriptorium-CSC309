@@ -105,14 +105,14 @@ const TemplateDetailPage = () => {
           <div className="mt-4">
             <button
               onClick={handleExecute}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Execute
             </button>
             {isAuthenticated && (
               <button
                 onClick={handleFork}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ml-4"
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 ml-4"
               >
                 Fork Template
               </button>

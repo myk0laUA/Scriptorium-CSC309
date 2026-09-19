@@ -1,3 +1,4 @@
+import FormShell from '../components/FormShell';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import './avatar-selection.css';
@@ -95,7 +96,8 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg">
+    <FormShell>
+    <div className="form-card">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Sign Up</h2>
 
       {success && <div className="text-green-500 mb-4">{success}</div>}
@@ -238,7 +240,7 @@ const SignUp: React.FC = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 w-full"
+          className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800 w-full"
         >
           Sign Up
         </button>
@@ -253,13 +255,14 @@ const SignUp: React.FC = () => {
       {success && (
         <div className="mt-4">
           <Link href="/login">
-            <button className="bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800 w-full">
+            <button className="bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-800 w-full">
               Log In
             </button>
           </Link>
         </div>
       )}
     </div>
+    </FormShell>
   );
 };
 

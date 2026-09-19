@@ -39,20 +39,22 @@ const TemplateCard = ({ template, onDelete }) => {
   };
 
   return (
-    <div className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-4 rounded shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <h3 className="font-bold text-xl mb-2 text-gray-800 dark:text-gray-200">
+    <div className="surface-card flex min-w-0 flex-col p-5 sm:p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-shadow hover:shadow-lg">
+      <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-gray-200 break-words">
         {template.title}
       </h3>
-      <p className="text-gray-700 dark:text-gray-300 mb-2">
+      <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300 mb-4 break-words">
         {template.explanation}
       </p>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        Tags: {template.tags}
-      </p>
-      <div className="flex flex-wrap gap-2 mt-2">
+      <div className="flex flex-wrap gap-1.5 mb-5" aria-label="Tags">
+        {(template.tags || '').split(',').filter(tag => tag.trim()).map((tag, index) =>
+          <span key={`${tag}-${index}`} className="max-w-full break-words rounded-md bg-gray-100 dark:bg-gray-700/60 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300">{tag.trim()}</span>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-2 mt-auto pt-1 text-sm">
         <button
           onClick={handleViewTemplate}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
         >
           View Template
         </button>
@@ -60,7 +62,7 @@ const TemplateCard = ({ template, onDelete }) => {
           <>
             <button
               onClick={handleEditTemplate}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
             >
               Edit
             </button>
@@ -74,7 +76,7 @@ const TemplateCard = ({ template, onDelete }) => {
         ) : (
           <button
             onClick={handleForkTemplate}
-            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors"
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors"
           >
             Fork Template
           </button>

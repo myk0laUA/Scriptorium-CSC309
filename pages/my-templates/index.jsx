@@ -51,9 +51,10 @@ const MyTemplatesPage = () => {
 
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-4">My Templates</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="page-section">
+        <h1 className="page-title">My Templates</h1>
+        <p className="page-description">Your saved code, ready to revisit and build on.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {templates.map((template) => (
             <TemplateCard
               key={template.id}

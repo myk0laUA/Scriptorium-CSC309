@@ -49,15 +49,18 @@ const TemplatesPage = () => {
 
   return (
     <Layout>
-      <div className="p-6 bg-gray-100 dark:bg-gray-900">
+      <div className="page-section">
+        <h1 className="page-title">Templates</h1>
+        <p className="page-description">Find a starting point for your next idea.</p>
         <input
           type="text"
+          aria-label="Search templates"
           placeholder="Search templates..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {templates.map((template) => (
             <TemplateCard
               key={template.id}

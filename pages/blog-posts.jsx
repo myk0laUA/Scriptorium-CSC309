@@ -530,8 +530,8 @@ const fetchBlogPosts = async (
 
   return (
     <Layout>
-    <div className="p-6">
-    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">Blog Posts</h2>
+    <div className="page-section">
+    <h2 className="page-title mb-6">Blog Posts</h2>
 
     {notification && (
       <div className="bg-red-500 text-white p-4 rounded mb-4">{notification}</div>
@@ -541,7 +541,7 @@ const fetchBlogPosts = async (
       {isLoggedIn && (
         <Link href="/create-post">
           <button
-            className="bg-green-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-600 w-full sm:w-auto whitespace-nowrap flex items-center justify-center"
+            className="bg-green-600 text-white px-4 py-2.5 rounded-lg text-base hover:bg-green-700 w-full sm:w-auto whitespace-nowrap flex items-center justify-center"
           >
             Create Blog Post
           </button>
@@ -550,14 +550,14 @@ const fetchBlogPosts = async (
 
       <button
         onClick={openFilterModal}
-        className="bg-gray-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-gray-600 w-full sm:w-auto whitespace-nowrap flex items-center justify-center"
+        className="bg-gray-500 text-white px-4 py-2.5 rounded-lg text-base hover:bg-gray-600 w-full sm:w-auto whitespace-nowrap flex items-center justify-center"
       >
         Filter
       </button>
 
       {showFilterModal && (
-      <div className="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg relative">
+      <div className="fixed inset-0 bg-gray-950/60 p-4 flex justify-center items-center z-50">
+        <div className="surface-card w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 relative">
           <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
             Filter Blog Posts
           </h2>
@@ -584,7 +584,7 @@ const fetchBlogPosts = async (
           />
           
           <div className="mb-4">
-              <label className="block text-gray-400 text-m font-medium mb-2">Filter by templates linked (press Ctrl for multi-selection)</label>
+              <label className="block text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Filter by templates linked (press Ctrl for multi-selection)</label>
               <select
                 multiple
                 value={filterLinkToTemplates}
@@ -600,7 +600,7 @@ const fetchBlogPosts = async (
             </div>
 
           <div className="mb-4">
-            <label className="block text-gray-400 text-m font-medium mb-2">Filter by template mentioned</label>
+            <label className="block text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Filter by template mentioned</label>
             <select
               value={filterTemplateMention}
               onChange={handleTemplateChange}
@@ -618,13 +618,13 @@ const fetchBlogPosts = async (
           <div className="flex justify-between">
             <button
               onClick={handleFilterSubmit}
-              className="bg-green-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-600"
+              className="bg-green-600 text-white px-4 py-2.5 rounded-lg text-base hover:bg-green-700"
             >
               Apply Filter
             </button>
             <button
               onClick={closeFilterModal}
-              className="bg-gray-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-gray-600"
+              className="bg-gray-500 text-white px-4 py-2.5 rounded-lg text-base hover:bg-gray-600"
             >
               Cancel
             </button>
@@ -633,10 +633,10 @@ const fetchBlogPosts = async (
       </div>
     )}
 
-<div className="w-full text-right space-x-2">
+<div className="sm:ml-auto flex flex-wrap items-center gap-2 sm:justify-end">
       <label
         htmlFor="sortOptions"
-        className="text-gray-700 dark:text-gray-300 text-xl font-medium"
+        className="text-gray-700 dark:text-gray-300 text-sm font-medium"
       >
         Sort By:
       </label>
@@ -644,7 +644,7 @@ const fetchBlogPosts = async (
         id="sortOptions"
         value={sortOption}
         onChange={handleSortChange}
-        className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-lg text-xl border border-gray-300 dark:border-gray-600"
+        className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-2.5 rounded-lg text-base border border-gray-300 dark:border-gray-600"
       >
         <option value="oldest">Date Added (Oldest)</option>
         <option value="valued">Valued</option>
@@ -655,18 +655,18 @@ const fetchBlogPosts = async (
       
       <div className="space-y-6">
         {blogPosts.map((post) => (
-          <div key={post.id} className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 relative">
+          <div key={post.id} className="surface-card p-5 sm:p-6 relative">
             {post.author.id === userId && (
               <button
-              onClick={() => handleDelete(post.id)}
+              aria-label="Delete post" onClick={() => handleDelete(post.id)}
               className="absolute top-4 right-4 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-500"
             >
               <FaTrash size={15} />
             </button>
           )}
 
-          <div className="flex justify-between items-center">
-              <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start pr-6">
+              <h3 className="text-xl font-semibold mb-2 break-words text-gray-800 dark:text-gray-200">
                 {post.title || "Untitled Post"}
               </h3>
               <div className="flex items-center space-x-2">
@@ -675,20 +675,20 @@ const fetchBlogPosts = async (
                   alt={`${post.author?.username || "Unknown Author"}'s avatar`}
                   className="w-6 h-6 rounded-full"
                 />
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-sm break-words text-gray-500 dark:text-gray-400">
                 Author: {post.author?.username || "Unknown"}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center text-yellow-500 mb-4">
+            <div className="flex items-center text-sm text-amber-700 dark:text-amber-400 mb-4">
               <strong>Rating:</strong>
               <span className="ml-2">{post.rating}</span>
             </div>
 
-            <p className="text-gray-700 dark:text-gray-300 mb-2">{post.description}</p>
+            <p className="text-gray-700 dark:text-gray-300 mb-2 break-words leading-relaxed">{post.description}</p>
 
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <div className="text-sm break-words text-gray-500 dark:text-gray-400 mb-4">
               <strong>Tags:</strong> {post.tags}
             </div>
 
@@ -715,7 +715,7 @@ const fetchBlogPosts = async (
               
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => handleVote(post.id, 'upvote')}
+                  aria-label="Upvote post" onClick={() => handleVote(post.id, 'upvote')}
                   className={`${
                     post.upvotedByUsers?.some((user) => user.id === userId)
                       ? 'text-blue-500 dark:text-blue-400'
@@ -725,7 +725,7 @@ const fetchBlogPosts = async (
                   <FaThumbsUp size={20} />
                 </button>
                 <button
-                  onClick={() => handleVote(post.id, 'downvote')}
+                  aria-label="Downvote post" onClick={() => handleVote(post.id, 'downvote')}
                   className={`${
                     post.downvotedByUsers.some((user) => user.id === userId)
                       ? 'text-blue-500 dark:text-blue-400'
@@ -735,7 +735,7 @@ const fetchBlogPosts = async (
                   <FaThumbsDown size={20} />
                 </button>
                 <button
-                  onClick={() => handleReportContent(post.id, 'post')}
+                  aria-label="Report post" onClick={() => handleReportContent(post.id, 'post')}
                   className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500"
                 >
                   <FaFlag size={20} />
@@ -744,7 +744,7 @@ const fetchBlogPosts = async (
 
               {post.author.id === userId && (
                 <Link href={`/edit-post/${post.id}`}>
-                  <button className="mt-4 px-4 py-2 rounded bg-blue-500 dark:bg-blue-700 text-white hover:bg-blue-600 dark:hover:bg-blue-800">
+                  <button className="mt-4 px-4 py-2 rounded bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800">
                     Edit
                   </button>
                 </Link>
@@ -754,7 +754,7 @@ const fetchBlogPosts = async (
               <div className="mt-4">
                 <button
                   onClick={() => handleViewTemplate(post.templateId)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   View Attached Template
                 </button>
@@ -769,14 +769,14 @@ const fetchBlogPosts = async (
           </h4>
           <label
             htmlFor={`commentSortOptions-${post.id}`}
-            className="text-gray-700 dark:text-gray-300 text-xl font-medium"
+            className="text-gray-700 dark:text-gray-300 text-sm font-medium"
           >
             Sort By:
           </label>
           <select
             id={`commentSortOptions-${post.id}`}
             onChange={(e) => handleCommentSortChange(post.id, e.target.value)}
-            className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-lg text-xl border border-gray-300 dark:border-gray-600 mb-4"
+            className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-2.5 rounded-lg text-base border border-gray-300 dark:border-gray-600 mb-4"
           >
             <option value="recent">Recent</option>
             <option value="top">Top</option>
@@ -803,7 +803,7 @@ const fetchBlogPosts = async (
             />
             <button
               onClick={() => handleAddComment(post.id, null, newComment)}
-              className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800"
+              className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800"
             >
               Add Comment
             </button>
@@ -819,7 +819,7 @@ const fetchBlogPosts = async (
       onClick={handlePreviousPage}
       disabled={currentPage === 1}
       className={`px-4 py-2 rounded ${
-        currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'
+        currentPage === 1 ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'
       }`}
     >
       Previous
@@ -828,7 +828,7 @@ const fetchBlogPosts = async (
     <div className="flex items-center space-x-2">
       <label
         htmlFor="limitOptions"
-        className="text-gray-700 dark:text-gray-300 text-xl font-medium"
+        className="text-gray-700 dark:text-gray-300 text-sm font-medium"
       >
         Posts per page:
       </label>
@@ -849,7 +849,7 @@ const fetchBlogPosts = async (
             selectedLimit
           );
         }}
-        className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-lg text-xl border border-gray-300 dark:border-gray-600"
+        className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-2.5 rounded-lg text-base border border-gray-300 dark:border-gray-600"
       >
         <option value="1">1</option>
         <option value="5">5</option>
@@ -867,7 +867,7 @@ const fetchBlogPosts = async (
         className={`px-4 py-2 rounded ${
           currentPage === totalPages
             ? 'bg-gray-300'
-            : 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}
       >
         Next

@@ -1,3 +1,4 @@
+import FormShell from '../components/FormShell';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -60,7 +61,8 @@ const LogIn: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg">
+    <FormShell>
+    <div className="form-card">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Log In</h2>
       {router.query.error && <p role="alert" className="text-red-500 mb-4">
         {router.query.error === 'OAuthAccountNotLinked'
@@ -99,22 +101,23 @@ const LogIn: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 w-full mb-4"
+          className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800 w-full mb-4"
         >
           Log In
         </button>
       </form>
       <Link href="/signup">
-        <button className="block bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 dark:hover:bg-green-800 w-full text-center mb-4">
+        <button className="block bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-800 w-full text-center mb-4">
           New User? Sign Up
         </button>
       </Link>
       <Link href="/">
-        <button className="block bg-red-500 dark:bg-red-700 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-800 w-full text-center">
+        <button className="block secondary-button px-4 py-2 rounded w-full text-center">
           Cancel
         </button>
       </Link>
     </div>
+    </FormShell>
   );
 };
 

@@ -158,7 +158,7 @@ const AdminReports = () => {
                               onClick={() => toggleVisibility(report.id, report.hidden)}
                               className={`px-4 py-2 rounded ${
                                 report.hidden
-                                  ? 'bg-green-500 dark:bg-green-700 text-white hover:bg-green-600 dark:hover:bg-green-800'
+                                  ? 'bg-green-600 dark:bg-green-700 text-white hover:bg-green-700 dark:hover:bg-green-800'
                                   : 'bg-red-500 dark:bg-red-700 text-white hover:bg-red-600 dark:hover:bg-red-800'
                               }`}
                             >
@@ -178,7 +178,7 @@ const AdminReports = () => {
                   className={`px-4 py-2 rounded ${
                     page === 1
                       ? 'bg-gray-300 dark:bg-gray-700'
-                      : 'bg-blue-500 dark:bg-blue-700 text-white hover:bg-blue-600 dark:hover:bg-blue-800'
+                      : 'bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800'
                   }`}
                 >
                   Previous
@@ -192,7 +192,7 @@ const AdminReports = () => {
                   className={`px-4 py-2 rounded ${
                     page === totalPages
                       ? 'bg-gray-300 dark:bg-gray-700'
-                      : 'bg-blue-500 dark:bg-blue-700 text-white hover:bg-blue-600 dark:hover:bg-blue-800'
+                      : 'bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800'
                   }`}
                 >
                   Next

@@ -1,3 +1,4 @@
+import FormShell from '../components/FormShell';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import '../app/globals.css';
@@ -101,7 +102,8 @@ const CreatePost: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg">
+    <FormShell>
+    <div className="form-card">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Create Blog Post</h2>
 
       {success && <div className="text-green-500 dark:text-green-400 mb-4">{success}</div>}
@@ -169,7 +171,7 @@ const CreatePost: React.FC = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 w-full"
+          className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800 w-full"
         >
           Upload Post
         </button>
@@ -184,13 +186,14 @@ const CreatePost: React.FC = () => {
       {error === 'You are not logged in' && (
         <div className="mt-6">
           <Link href="/login">
-            <button className="bg-green-500 dark:bg-green-700 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-600 dark:hover:bg-green-800 w-full">
+            <button className="bg-green-600 dark:bg-green-700 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-700 dark:hover:bg-green-800 w-full">
               Log In
             </button>
           </Link>
         </div>
       )}
     </div>
+    </FormShell>
   );
 };
 

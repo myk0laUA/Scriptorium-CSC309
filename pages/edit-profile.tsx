@@ -1,3 +1,4 @@
+import FormShell from '../components/FormShell';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import OAuthButtons from '../components/OAuthButtons';
@@ -110,7 +111,8 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg">
+    <FormShell>
+    <div className="form-card">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Edit Profile</h2>
       <OAuthButtons linking />
 
@@ -172,7 +174,7 @@ const EditProfile = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 w-full"
+          className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800 w-full"
         >
           Confirm Changes
         </button>
@@ -184,6 +186,7 @@ const EditProfile = () => {
         </button>
       </Link>
     </div>
+    </FormShell>
   );
 };
 

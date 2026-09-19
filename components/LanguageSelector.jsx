@@ -14,6 +14,7 @@ const LanguageSelector = ({ language, onChange }) => {
 
   return (
     <select
+      aria-label="Programming language"
       value={language}
       onChange={onChange}
       className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 transition duration-300"
