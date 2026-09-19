@@ -13,7 +13,7 @@ export default async function authenticateJWT(req, res, next) {
     try {
         const user = jwt.verify(token, process.env.ACCESS_TOKEN);
         req.user = user;
-        next(); 
+        return await next();
 
     } catch (err) {
         return res.status(403).json({ error: 'You are not logged in' });

@@ -1,0 +1,7 @@
+scriptorium-myk.duckdns.org {
+    reverse_proxy web:3000
+}
+
+http:// {
+    redir https://scriptorium-myk.duckdns.org{uri} 308
+}

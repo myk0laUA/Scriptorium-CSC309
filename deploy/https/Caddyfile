@@ -1,0 +1,14 @@
+{
+    # Port 80 remains with the existing app until the full deployment migration.
+    auto_https disable_redirects
+}
+
+scriptorium-myk.duckdns.org {
+    tls {
+        issuer acme {
+            dir https://acme-v02.api.letsencrypt.org/directory
+            disable_http_challenge
+        }
+    }
+    reverse_proxy app:3000
+}

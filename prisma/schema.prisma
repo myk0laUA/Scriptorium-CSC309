@@ -13,9 +13,10 @@ model User {
   firstName         String
   lastName          String
   email             String     @unique
-  password          String     
+  password          String?
   avatar            String?
-  phoneNum          String     @unique
+  phoneNum          String?    @unique
+  oauthAccounts     OAuthAccount[]
   templates         Template[]
   blogPosts         BlogPost[]
   upvotedPosts      BlogPost[] @relation("UserUpvotes")
@@ -25,6 +26,17 @@ model User {
   comments          Comment[] 
   reports           Report[]
   role              String?    @default("USER")
+}
+
+model OAuthAccount {
+  id                Int    @id @default(autoincrement())
+  provider          String
+  providerAccountId String
+  userId            Int
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model BlogPost {

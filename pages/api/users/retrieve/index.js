@@ -19,7 +19,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: "User Not Found"});
             }
 
-            return res.status(200).json(existingUser);
+            return res.status(200).json({ ...existingUser, password: undefined });
 
         } else {
             res.status(405).json({ message: "Method not allowed" });

@@ -1,0 +1,116 @@
+name: Test and release
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: scriptorium_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U test -d scriptorium_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/scriptorium_test
+      ACCESS_TOKEN: ci-access-secret-not-for-production
+      REFRESH_TOKEN: ci-refresh-secret-not-for-production
+      ACCESS_TOKEN_EXPIRES_IN: 15m
+      REFRESH_TOKEN_EXPIRES_IN: 7d
+      NEXTAUTH_SECRET: ci-oauth-secret-not-for-production
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm test
+      - run: npx prisma migrate deploy
+      - run: npm run build
+      - name: Test running application and database
+        run: |
+          npm start > /tmp/scriptorium-test.log 2>&1 &
+          trap 'kill $! || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/api/health; then break; fi
+            sleep 2
+          done
+          node tests/integration.cjs
+
+  release:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Build production image
+        run: docker build -t "scriptorium:$GITHUB_SHA" .
+      - name: Smoke test production container
+        run: |
+          docker network create smoke
+          docker run -d --name smoke-db --network smoke \
+            -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test postgres:16
+          for attempt in $(seq 1 30); do
+            if docker exec smoke-db pg_isready -h 127.0.0.1 -U test; then break; fi
+            sleep 2
+          done
+          docker run --rm --network smoke \
+            -e DATABASE_URL=postgresql://test:test@smoke-db:5432/test \
+            "scriptorium:$GITHUB_SHA" ./node_modules/.bin/prisma migrate deploy
+          docker run -d --name smoke-app --network smoke -p 3000:3000 \
+            -e DATABASE_URL=postgresql://test:test@smoke-db:5432/test \
+            -e NEXTAUTH_URL=http://localhost:3000 -e NEXTAUTH_SECRET=ci-only-secret \
+            "scriptorium:$GITHUB_SHA"
+          curl --retry 15 --retry-delay 2 --retry-all-errors -fsS http://localhost:3000/api/health
+          curl -fsS http://localhost:3000/login > /dev/null
+      - name: Package deployment
+        run: |
+          docker save "scriptorium:$GITHUB_SHA" | gzip > app-image.tar.gz
+          tar -czf deployment.tar.gz deploy/production
+          sha256sum app-image.tar.gz deployment.tar.gz > SHA256SUMS
+      - name: Publish tested release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$current" != "$GITHUB_SHA" ]; then
+            echo 'A newer main commit exists; skipping this release.'
+            exit 0
+          fi
+          tag="deploy-$GITHUB_SHA"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            draft=$(gh release view "$tag" --json isDraft --jq .isDraft)
+            if [ "$draft" != true ]; then
+              echo 'This commit already has a published release.'
+              exit 0
+            fi
+          else
+            gh release create "$tag" --target "$GITHUB_SHA" --draft \
+              --title "Deployment $GITHUB_SHA" \
+              --notes 'Automated production image and deployment files. Published only after tests pass.'
+          fi
+          gh release upload "$tag" app-image.tar.gz deployment.tar.gz SHA256SUMS --clobber
+          gh release edit "$tag" --draft=false --latest

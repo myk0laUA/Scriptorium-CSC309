@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import OAuthButtons from '../components/OAuthButtons';
 import './avatar-selection.css';
 import '../app/globals.css';
 
@@ -112,6 +113,7 @@ const EditProfile = () => {
   return (
     <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Edit Profile</h2>
+      <OAuthButtons linking />
 
       {success && <div className="text-green-500 dark:text-green-400 mb-4">{success}</div>}
       {error && <div className="text-red-500 dark:text-red-400 mb-4">{error}</div>}

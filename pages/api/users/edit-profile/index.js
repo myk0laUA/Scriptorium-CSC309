@@ -79,7 +79,7 @@ export default async function handler(req, res) {
 
             }
 
-            return res.status(200).json(updatedUser);
+            return res.status(200).json({ ...updatedUser, password: undefined });
 
         } else {
             

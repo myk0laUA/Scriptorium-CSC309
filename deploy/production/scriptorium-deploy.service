@@ -1,0 +1,11 @@
+[Unit]
+Description=Deploy tested Scriptorium releases
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flock -n /run/scriptorium-deploy.lock /usr/bin/python3 /opt/scriptorium/poll-release.py
+TimeoutStartSec=20min
+UMask=0077

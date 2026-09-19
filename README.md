@@ -5,13 +5,18 @@
 </h1>
 
 <p align="center">
-  <a href="http://18.217.146.136/" target="_blank">
+  <a href="https://scriptorium-myk.duckdns.org/" target="_blank">
     <img src="https://img.shields.io/badge/Live-Demo-blue?logo=amazon-aws&style=for-the-badge" alt="live demo"/>
   </a>
 </p>
 
 > Built for **CSC309 – Programming on the Web** (University of Toronto).  
 > Deployed on AWS EC2 with Docker.
+
+Production setup, OAuth registration, deployment checks, and rollback instructions
+are documented in [deploy/production/README.md](deploy/production/README.md).
+Pull requests run CI; successful `main` builds publish a release that EC2 deploys
+automatically after taking a database backup. HTTP redirects to the HTTPS domain.
 
 ---
 

@@ -74,7 +74,7 @@ export default async function handler(req, res) {
                 password: hashedPassword,
                 avatar,
                 phoneNum,
-                role,
+                role: 'USER',
             }
         })
         // Don't return password hash

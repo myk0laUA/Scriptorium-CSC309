@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import OAuthButtons from '../components/OAuthButtons';
 import '../app/globals.css';
 
 // used ChatGPT for conversion to tsx
@@ -61,6 +62,16 @@ const LogIn: React.FC = () => {
   return (
     <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Log In</h2>
+      {router.query.error && <p role="alert" className="text-red-500 mb-4">
+        {router.query.error === 'OAuthAccountNotLinked'
+          ? 'An account already uses this email. Log in with your existing method, then connect the provider in Edit Profile.'
+          : router.query.error === 'VerifiedEmailRequired'
+          ? 'Please verify an email address with your provider before signing in.'
+          : router.query.error === 'AccountAlreadyLinked'
+          ? 'This provider is already connected to another account.'
+          : 'Social login was cancelled or could not be completed. Please try again.'}
+      </p>}
+      <OAuthButtons />
       {success && <div className="text-green-500 mb-4">{success}</div>}
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <form onSubmit={handleSubmit}>

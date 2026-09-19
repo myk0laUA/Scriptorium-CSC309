@@ -2,3 +2,8 @@ node_modules
 .next
 *.log
 .env*
+.git
+.github
+deploy
+tests
+*.db
