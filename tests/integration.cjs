@@ -1,5 +1,7 @@
 const assert = require('node:assert/strict');
 const { PrismaClient } = require('@prisma/client');
+const { encode } = require('next-auth/jwt');
+const jwt = require('jsonwebtoken');
 const { resolveOAuthUser } = require('../utils/oauth-accounts.cjs');
 const base = process.env.TEST_BASE_URL || 'http://localhost:3000';
 const prisma = new PrismaClient();
@@ -24,6 +26,13 @@ async function post(path, body, headers = {}) {
   const profile = await fetch(base + '/api/users/retrieve', { headers: { Authorization: `Bearer ${login.body.accessToken}` } });
   assert.equal(profile.status, 200);
   assert.equal((await profile.json()).password, undefined);
+  const edited = await fetch(base + '/api/users/edit-profile', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${login.body.accessToken}` },
+    body: JSON.stringify({ avatar: '/avatars/avatar2.png' }),
+  });
+  assert.equal(edited.status, 200);
+  assert.equal((await edited.json()).password, undefined);
   const oauth = await resolveOAuthUser(prisma, {
     provider: 'google', providerAccountId: `ci-${suffix}`, email: `oauth_${suffix}@example.com`,
     emailVerified: true, name: 'OAuth Test',
@@ -38,6 +47,21 @@ async function post(path, body, headers = {}) {
   assert.equal(forged.status, 403);
   const unauthenticated = await post('/api/users/oauth/complete', {}, { Origin: new URL(base).origin });
   assert.equal(unauthenticated.status, 401);
+  const session = await encode({ secret: process.env.NEXTAUTH_SECRET, token: { appUserId: oauth.id }, maxAge: 600 });
+  const exchange = await post('/api/users/oauth/complete', {}, {
+    Origin: new URL(base).origin, Cookie: `next-auth.session-token=${session}`,
+  });
+  assert.equal(exchange.status, 200);
+  const appToken = jwt.verify(exchange.body.accessToken, process.env.ACCESS_TOKEN);
+  assert.equal(appToken.id, oauth.id);
+  assert.equal(appToken.role, 'USER');
+  const linkIntent = await fetch(base + '/api/users/oauth/link', {
+    method: 'POST', headers: { Origin: new URL(base).origin, 'Content-Type': 'application/json', Authorization: `Bearer ${login.body.accessToken}` },
+    body: JSON.stringify({ provider: 'github' }),
+  });
+  assert.equal(linkIntent.status, 204);
+  assert.match(linkIntent.headers.get('set-cookie'), /HttpOnly/);
+  assert.match(linkIntent.headers.get('set-cookie'), /SameSite=Lax/);
   console.log('Integration checks passed: DB, password login, OAuth accounts/linking, role safety, profile privacy, origin checks.');
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   await prisma.user.deleteMany({ where: { id: { in: ids } } });

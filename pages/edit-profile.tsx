@@ -7,11 +7,11 @@ import '../app/globals.css';
 // used ChatGPT for conversion to tsx
 
 const availableAvatars = [
-  'http://localhost:3000/avatars/avatar1.png',
-  'http://localhost:3000/avatars/avatar2.png',
-  'http://localhost:3000/avatars/avatar3.png',
-  'http://localhost:3000/avatars/avatar4.png',
-  'http://localhost:3000/avatars/avatar5.png',
+  '/avatars/avatar1.png',
+  '/avatars/avatar2.png',
+  '/avatars/avatar3.png',
+  '/avatars/avatar4.png',
+  '/avatars/avatar5.png',
 ];
 
 const EditProfile = () => {
@@ -34,8 +34,7 @@ const EditProfile = () => {
           return;
         }
 
-        const response = await fetch('/api/users/edit-profile', {
-          method: 'PUT',
+        const response = await fetch('/api/users/retrieve', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -50,7 +49,7 @@ const EditProfile = () => {
         setFormData({
           email: userData.email || '',
           password: '',
-          avatar: userData.avatar || '',
+          avatar: (userData.avatar || '').replace('http://localhost:3000', ''),
           phoneNum: userData.phoneNum || '',
         });
       } catch (err) {
